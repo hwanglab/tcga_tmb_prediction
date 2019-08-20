@@ -82,7 +82,7 @@ for ip=1:length(imagePath)
             %close all;
         end
         
-        %5) feature computation
+        %5) feature computation at 5x magnification
         if any(mag==magFine)
             levelforRead=find(mag==magFine,1);
             feat=xu_textureComputation(top_left,bottom_right,slidePtr,levelforRead,magFine,magCoarse);
