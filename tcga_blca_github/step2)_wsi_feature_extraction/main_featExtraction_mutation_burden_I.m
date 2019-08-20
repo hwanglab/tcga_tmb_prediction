@@ -61,7 +61,6 @@ for ip=1:length(imagePath)
             downsampleFactors,objectivePower]=openslide_get_slide_properties(slidePtr);
         mag=objectivePower./round(downsampleFactors);
         
-        
         %1) read magCoarse image
         RGB=wsi_read(slidePtr,objectivePower,downsampleFactors,width,height,magCoarse);
         
@@ -92,13 +91,12 @@ for ip=1:length(imagePath)
             feat=xu_textureComputation(top_left,bottom_right,slidePtr,levelforRead,magFine,magCoarse,magToUseAbove);
         end
         
-        % 5) tumor region classification
+        % 6) tumor patch classification
         ff=table(feat);
         ff.Properties.VariableNames={'features'};
         [ylabel,scores]=trainedModel_SVM_cubic.predictFcn(ff);
-        %ylabel=scores(:,2)>0.5;   % use this thresholds to select tumor patches
         
-        % 6) feature clustering
+        % 7) feature clustering (AP clustering)
         feat_tumor=feat(logical(ylabel),:);
         top_left_tumor=top_left(logical(ylabel),:);
         bottom_right_tumor=bottom_right(logical(ylabel),:);
@@ -109,17 +107,15 @@ for ip=1:length(imagePath)
         %[idx,indf]=feature_clustering(feat_tumor_cluster,numc); % k-means clustering
         %freq=hist(idx,1:length(unique(idx)));
         
-        
         [idx,indf]=feature_clustering_AP(feat_tumor_cluster);    % AP clustering
         freq=zeros(1,length(indf));
         for t=1:length(indf)
             freq(t)=sum(idx==indf(t));
         end
         
-        
-        
         feat40=feat_tumor(indf,:);
         
+        % for generating figures shown in the paper
         if debug==1
             % for generating figures
 %             mpdc10 = distinguishable_colors(length(indf));
