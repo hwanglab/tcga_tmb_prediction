@@ -1,8 +1,5 @@
-# function to plot KM curves
-# low_tmb_high_entropy vs low_tmb_low_entropy (low tmb is the ground truth)
-# without considering intermediate level patients
-
 # load packages
+
 library(survival)
 library(survminer)
 library(dplyr)
@@ -15,7 +12,7 @@ pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "She
 
 
 path <- system.file("mat-files", package = "R.matlab")
-pathname <- file.path("E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/step11)_tmb_map_process/features/", "feat.mat")
+pathname <- file.path("./features/", "feat.mat")
 blca_pre<-readMat(pathname)
 pid<-vector()
 plabel<-vector()
@@ -42,7 +39,7 @@ for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),1,23)
   for (jj in 1:length(pid_pred_gt$`Patient ID`))
     if (temp_pID==substring(as.character(pid_pred_gt$`Patient ID`[jj]),2,24)){
-      plabel[kk]<-paste(pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
+      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj],'-',pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
       break
     }
 }
@@ -64,19 +61,18 @@ pid2<-vector()
 plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
-  if (plabel[kk]=="'Low'-High") {
+  if (plabel[kk]=="'High'-'High'-Low") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if(plabel[kk]=="'High'-High"){
+  } else if (plabel[kk]=="'High'-'High'-High" | plabel[kk]=="'High'-'Low'-High" | plabel[kk]=="'High'-'Low'-Low"){
     pid2[ind]<-pid[kk]
-    plabel2[ind]<-plabel[kk]
+    plabel2[ind]<-'Others in High'
     ind<-ind+1
-  }
-  else {
+  } else {
     print('skip!')
   }
-  
+    
 }
 
 # pid2<-vector()
@@ -93,7 +89,7 @@ for (kk in 1:length(pid)){
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -160,25 +156,8 @@ surv_object<-Surv(time=blca_pred$futime,event=blca_pred$fustat)
 
 fit1<-survfit(surv_object~label_class,data=blca_pred)
 # summary(fit1)
-
-#setEPS()
-#postscript("whatever.eps")
-
-ggsurvplot(fit1,pval = TRUE,
-           risk.table = TRUE, 
-           legend=c(0.8,0.9),
-           #legend.labs=c("High-High (66)","Low-High (57)"),
-           legend.title="Prediction categories",
-           xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
-
-#dev.off()
-
-#legend=c(0.8,0.9),
-#legend.title="WES TMB Levels",
-#legend.labs=c("High (126)","Low (121)"),
-#risk.table = TRUE, 
-#palette = c("#FF9E29", "#86AA00"),
-#xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
+# 
+ggsurvplot(fit1,pval = TRUE,risk.table = TRUE,xlab="Time in months")
 
 # ggsurvplot(fit1,
 #            #legend=c(0.8,0.9),

@@ -1,6 +1,7 @@
 # function to plot KM curves
-# high_low vs high_low vs low_high vs low_low
-# without considering intermediate level patients
+# high_high_high vs high_high_low vs high_low_high vs high_low_low vs low_high_high vs low_high_low vs low_low_high vs low_low_low
+# considering high, low level patients
+
 
 # load packages
 library(survival)
@@ -15,7 +16,7 @@ pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "She
 
 
 path <- system.file("mat-files", package = "R.matlab")
-pathname <- file.path("E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/step11)_tmb_map_process/features/", "feat.mat")
+pathname <- file.path("./features/", "feat.mat")
 blca_pre<-readMat(pathname)
 pid<-vector()
 plabel<-vector()
@@ -24,11 +25,11 @@ pvalue<-vector()
 plabel1<-vector()
 
 
-for (kk in 1:length(blca_pre[[1]])/3){
+temp<-length(blca_pre[[1]])/3
+for (kk in 1:temp){
   pid[kk]<-blca_pre[[1]][[kk]]
-  pvalue[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])/3]]
+  pvalue[kk]<-blca_pre[[1]][[kk+temp]]
   #plabel0[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])*2/3]]
-  
 }
 
 
@@ -42,41 +43,44 @@ for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),1,23)
   for (jj in 1:length(pid_pred_gt$`Patient ID`))
     if (temp_pID==substring(as.character(pid_pred_gt$`Patient ID`[jj]),2,24)){
-      plabel[kk]<-paste(pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
+      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj],'-',pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
       break
     }
 }
-
-
-# pid2<-vector()
-# plabel2<-vector()
-# ind=1
-# for (kk in 1:length(pid)){
-#   if (plabel[kk]=="'High'-Low" | plabel[kk]=="'Low'-High") {
-#     pid2[ind]<-pid[kk]
-#     plabel2[ind]<-plabel[kk]
-#     ind<-ind+1
-#   }
-# }
-
 
 pid2<-vector()
 plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
-  if (plabel[kk]=="'High'-Low") {
+  if (plabel[kk]=="'High'-'High'-Low") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="'High'-High"){
+  } else if (plabel[kk]=="'High'-'High'-High") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="'Low'-Low") {
+  } else if (plabel[kk]=="'High'-'Low'-High") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if(plabel[kk]=="'Low'-High"){
+  } else if (plabel[kk]=="'High'-'Low'-Low"){
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  } else if (plabel[kk]=="'Low'-'High'-Low") {
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  } else if(plabel[kk]=="'Low'-'High'-High"){
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  } else if (plabel[kk]=="'Low'-'Low'-High") {
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  } else if (plabel[kk]=="'Low'-'Low'-Low") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
@@ -87,21 +91,11 @@ for (kk in 1:length(pid)){
   
 }
 
-# pid2<-vector()
-# plabel2<-vector()
-# ind=1
-# for (kk in 1:length(pid)){
-#   if (plabel[kk]=="'High'-High" | plabel[kk]=="'Low'-Low") {
-#     pid2[ind]<-pid[kk]
-#     plabel2[ind]<-plabel[kk]
-#     ind<-ind+1
-#   }
-# }
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -134,24 +128,6 @@ if (length(row_ind2)>0){
 
 #rownames(blca2)<-NULL # reorder row number
 
-# computer median survival time for different group of patients
-#class1_surv<-c()
-#class2_surv<-c()
-#for (m in 1:length(blca_pred$patientID))
-#{
-#  temp=as.character(blca_pred$label_class[m])
-#  if (temp=="'High'-Low"){
-#    class1_surv<-c(class1_surv,blca_pred$futime[m])
-#  } else if(temp=="'Low'-Low"){
-#    class2_surv<-c(class2_surv,blca_pred$futime[m])
-#  }else {print("not possible!!!!")}
-#}
-#surv1_mean<-mean(class1_surv)
-#surv1_median<-median(class1_surv)
-
-#surv2_mean<-mean(class2_surv)
-#surv2_median<-median(class2_surv)
-
 # dichotomize the dead/alive and change data labels
 # dead: censored 1, alive 0
 blca_pred$fustat <- factor(blca_pred$fustat,
@@ -168,44 +144,17 @@ surv_object<-Surv(time=blca_pred$futime,event=blca_pred$fustat)
 
 fit1<-survfit(surv_object~label_class,data=blca_pred)
 # summary(fit1)
+# 
 
-#setEPS()
-#postscript("whatever.eps")
+setEPS()
+postscript("whatever.eps")
 
 ggsurvplot(fit1,pval = TRUE,
-           #risk.table = TRUE, 
-           legend=c(0.8,0.9),
-           legend.labs=c("High-High (68)","High-Low (61)","Low-High (55)","Low-Low (63)"),
-           legend.title="Prediction categories",
-           xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
+           #risk.table = TRUE,
+           legend=c(0.8,0.85),
+           legend.labs=c("High-High-High (48)","High-High-Low (42)","High-Low-High (18)", "High-Low-Low (18)", 
+                         "Low-High-High (20)", "Low-High-Low (19)", "Low-Low-High (37)", "Low-Low-Low (45)"),
+           legend.title="Eight categories",
+           xlab='Time in Months')+ggtitle("TCGA Bladder Cohort")
 
-#dev.off()
-
-#legend=c(0.8,0.9),
-#legend.title="WES TMB Levels",
-#legend.labs=c("High (126)","Low (121)"),
-#risk.table = TRUE, 
-#palette = c("#FF9E29", "#86AA00"),
-#xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
-
-# ggsurvplot(fit1,
-#            #legend=c(0.8,0.9),
-#            legend.title="stratify by TMB-entropy",
-#            #legend.labs=c("High TMB","Low TMB"),
-#            xscale="d_m",
-#            #risk.table = TRUE,
-#            #surv.median.line = "hv", # Add medians survival
-#            xlab="Time in months",
-#            pval=TRUE,
-#            conf.int = TRUE,
-#            tables.theme = theme_cleantable(),
-#            #palette = c("#FF9E29", "#86AA00"),
-#            ggtheme = theme_gray()
-#            ) # Change ggplot2 theme
-
-
-#ggsave(filename = "survival_svgg16.eps",
-#       fallback_resolution = 600,
-#       device = cairo_ps)
-
-
+dev.off()

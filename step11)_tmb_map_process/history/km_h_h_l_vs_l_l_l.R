@@ -12,19 +12,19 @@ pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "She
 
 
 path <- system.file("mat-files", package = "R.matlab")
-pathname <- file.path("E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/step11)_tmb_map_process/features/", "feat.mat")
+pathname <- file.path("./features/", "feat.mat")
 blca_pre<-readMat(pathname)
 pid<-vector()
 plabel<-vector()
 pvalue<-vector()
-plabel0<-vector()
+#plabel0<-vector()
 plabel1<-vector()
-plabel<-vector()
+
 
 for (kk in 1:length(blca_pre[[1]])/3){
   pid[kk]<-blca_pre[[1]][[kk]]
   pvalue[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])/3]]
-  plabel0[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])*2/3]]
+  #plabel0[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])*2/3]]
   
 }
 
@@ -39,16 +39,50 @@ for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),1,23)
   for (jj in 1:length(pid_pred_gt$`Patient ID`))
     if (temp_pID==substring(as.character(pid_pred_gt$`Patient ID`[jj]),2,24)){
-      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj])
+      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj],'-',pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
       break
     }
 }
 
 
-blca_pred<-data.frame("patientID"=Reduce(rbind,pid),"label_class"=Reduce(rbind,plabel))
+# pid2<-vector()
+# plabel2<-vector()
+# ind=1
+# for (kk in 1:length(pid)){
+#   if (plabel[kk]=="'High'-Low" | plabel[kk]=="'Low'-High") {
+#     pid2[ind]<-pid[kk]
+#     plabel2[ind]<-plabel[kk]
+#     ind<-ind+1
+#   }
+# }
+
+
+pid2<-vector()
+plabel2<-vector()
+ind=1
+for (kk in 1:length(pid)){
+  if (plabel[kk]=="'High'-'High'-Low" | plabel[kk]=="'Low'-'Low'-Low") {
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  }
+}
+
+# pid2<-vector()
+# plabel2<-vector()
+# ind=1
+# for (kk in 1:length(pid)){
+#   if (plabel[kk]=="'High'-High" | plabel[kk]=="'Low'-Low") {
+#     pid2[ind]<-pid[kk]
+#     plabel2[ind]<-plabel[kk]
+#     ind<-ind+1
+#   }
+# }
+
+blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -82,22 +116,22 @@ if (length(row_ind2)>0){
 #rownames(blca2)<-NULL # reorder row number
 
 # computer median survival time for different group of patients
-class1_surv<-c()
-class2_surv<-c()
-for (m in 1:length(blca_pred$patientID))
-{
-  temp=as.character(blca_pred$label_class[m])
-  if (temp=="'High'"){
-    class1_surv<-c(class1_surv,blca_pred$futime[m])
-  } else if(temp=="'Low'"){
-    class2_surv<-c(class2_surv,blca_pred$futime[m])
-  }else {print("not possible!!!!")}
-}
-surv1_mean<-mean(class1_surv)
-surv1_median<-median(class1_surv)
+#class1_surv<-c()
+#class2_surv<-c()
+#for (m in 1:length(blca_pred$patientID))
+#{
+#  temp=as.character(blca_pred$label_class[m])
+#  if (temp=="'High'-Low"){
+#    class1_surv<-c(class1_surv,blca_pred$futime[m])
+#  } else if(temp=="'Low'-Low"){
+#    class2_surv<-c(class2_surv,blca_pred$futime[m])
+#  }else {print("not possible!!!!")}
+#}
+#surv1_mean<-mean(class1_surv)
+#surv1_median<-median(class1_surv)
 
-surv2_mean<-mean(class2_surv)
-surv2_median<-median(class2_surv)
+#surv2_mean<-mean(class2_surv)
+#surv2_median<-median(class2_surv)
 
 # dichotomize the dead/alive and change data labels
 # dead: censored 1, alive 0
@@ -116,14 +150,7 @@ surv_object<-Surv(time=blca_pred$futime,event=blca_pred$fustat)
 fit1<-survfit(surv_object~label_class,data=blca_pred)
 # summary(fit1)
 # 
-ggsurvplot(fit1,pval = TRUE, 
-           #title="TCGA Bladder Cohort",
-           legend=c(0.8,0.9),
-           legend.title="WES TMB Levels",
-           legend.labs=c("High (126)","Low (121)"),
-           #risk.table = TRUE, 
-           palette = c("#FF9E29", "#86AA00"),
-           xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
+ggsurvplot(fit1,pval = TRUE,risk.table = TRUE,xlab="Time in months")
 
 # ggsurvplot(fit1,
 #            #legend=c(0.8,0.9),
@@ -146,39 +173,3 @@ ggsurvplot(fit1,pval = TRUE,
 #       device = cairo_ps)
 
 
-
-
-# # import the ovarian cancer dataset
-# data(ovarian)
-# glimpse(ovarian)
-# 
-# # dichotomize the age and change data labels
-# ovarian$rx <- factor(ovarian$rx,
-#                      levels=c("1","2"),
-#                      labels=c("A","B"))
-# 
-# ovarian$resid.ds<-factor(ovarian$resid.ds,
-#                          level=c("1","2"),
-#                          labels=c("no","yes"))
-# 
-# ovarian$ecog.ps<-factor(ovarian$ecog.ps,
-#                         levels=c("1","2"),
-#                         labels=c("good","bad"))
-# 
-# # Data seems to be biomodal
-# hist(ovarian$age)
-# 
-# ovarian<-mutate(ovarian,age_group=ifelse(age>=50,"old","young"))
-# #ovarian <- ovarian %>% mutate(age_group = ifelse(age >=50, "old", "young"))
-# # %>% is called multiple times to "chain" functions together
-# # iris %>% head() %>% summary() is the same as: summary(head(iris))
-# ovarian$age_group<-factor(ovarian$age_group)
-# 
-# # fit survival data using the kaplan-Meier method
-# surv_object<-Surv(time=ovarian$futime,event=ovarian$fustat)
-# surv_object
-# 
-# fit1<-survfit(surv_object~rx,data=ovarian)
-# summary(fit1)
-# 
-# ggsurvplot(fit1,data=ovarian,pval=TRUE)
