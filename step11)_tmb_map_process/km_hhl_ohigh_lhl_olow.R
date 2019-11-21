@@ -1,5 +1,9 @@
-# load packages
+# function to plot KM curves
+# high_high_high vs high_high_low vs high_low_high vs high_low_low vs low_high_high vs low_high_low vs low_low_high vs low_low_low
+# considering high, low level patients
 
+
+# load packages
 library(survival)
 library(survminer)
 library(dplyr)
@@ -12,7 +16,7 @@ pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "She
 
 
 path <- system.file("mat-files", package = "R.matlab")
-pathname <- file.path("E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/step11)_tmb_map_process/features/", "feat.mat")
+pathname <- file.path("./features/", "feat.mat")
 blca_pre<-readMat(pathname)
 pid<-vector()
 plabel<-vector()
@@ -21,11 +25,11 @@ pvalue<-vector()
 plabel1<-vector()
 
 
-for (kk in 1:length(blca_pre[[1]])/3){
+temp<-length(blca_pre[[1]])/3
+for (kk in 1:temp){
   pid[kk]<-blca_pre[[1]][[kk]]
-  pvalue[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])/3]]
+  pvalue[kk]<-blca_pre[[1]][[kk+temp]]
   #plabel0[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])*2/3]]
-  
 }
 
 
@@ -44,19 +48,6 @@ for (kk in 1:length(pid)){
     }
 }
 
-
-# pid2<-vector()
-# plabel2<-vector()
-# ind=1
-# for (kk in 1:length(pid)){
-#   if (plabel[kk]=="'High'-Low" | plabel[kk]=="'Low'-High") {
-#     pid2[ind]<-pid[kk]
-#     plabel2[ind]<-plabel[kk]
-#     ind<-ind+1
-#   }
-# }
-
-
 pid2<-vector()
 plabel2<-vector()
 ind=1
@@ -65,31 +56,29 @@ for (kk in 1:length(pid)){
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="'High'-'High'-High" | plabel[kk]=="'High'-'Low'-High" | plabel[kk]=="'High'-'Low'-Low"){
+  } else if (plabel[kk]=="'High'-'High'-High" | plabel[kk]=="'High'-'Low'-High" | plabel[kk]=="'High'-'Low'-Low") {
     pid2[ind]<-pid[kk]
-    plabel2[ind]<-'Others in High'
+    plabel2[ind]<-'WEX High Others'
+    ind<-ind+1
+  } else if (plabel[kk]=="'Low'-'High'-Low") {
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-plabel[kk]
+    ind<-ind+1
+  } else if(plabel[kk]=="'Low'-'High'-High" | plabel[kk]=="'Low'-'Low'-High" | plabel[kk]=="'Low'-'Low'-Low"){
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-'WEX Low Others'
     ind<-ind+1
   } else {
     print('skip!')
   }
-    
+  
 }
 
-# pid2<-vector()
-# plabel2<-vector()
-# ind=1
-# for (kk in 1:length(pid)){
-#   if (plabel[kk]=="'High'-High" | plabel[kk]=="'Low'-Low") {
-#     pid2[ind]<-pid[kk]
-#     plabel2[ind]<-plabel[kk]
-#     ind<-ind+1
-#   }
-# }
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -122,24 +111,6 @@ if (length(row_ind2)>0){
 
 #rownames(blca2)<-NULL # reorder row number
 
-# computer median survival time for different group of patients
-#class1_surv<-c()
-#class2_surv<-c()
-#for (m in 1:length(blca_pred$patientID))
-#{
-#  temp=as.character(blca_pred$label_class[m])
-#  if (temp=="'High'-Low"){
-#    class1_surv<-c(class1_surv,blca_pred$futime[m])
-#  } else if(temp=="'Low'-Low"){
-#    class2_surv<-c(class2_surv,blca_pred$futime[m])
-#  }else {print("not possible!!!!")}
-#}
-#surv1_mean<-mean(class1_surv)
-#surv1_median<-median(class1_surv)
-
-#surv2_mean<-mean(class2_surv)
-#surv2_median<-median(class2_surv)
-
 # dichotomize the dead/alive and change data labels
 # dead: censored 1, alive 0
 blca_pred$fustat <- factor(blca_pred$fustat,
@@ -157,26 +128,19 @@ surv_object<-Surv(time=blca_pred$futime,event=blca_pred$fustat)
 fit1<-survfit(surv_object~label_class,data=blca_pred)
 # summary(fit1)
 # 
-ggsurvplot(fit1,pval = TRUE,risk.table = TRUE,xlab="Time in months")
 
-# ggsurvplot(fit1,
-#            #legend=c(0.8,0.9),
-#            legend.title="stratify by TMB-entropy",
-#            #legend.labs=c("High TMB","Low TMB"),
-#            xscale="d_m",
-#            #risk.table = TRUE,
-#            #surv.median.line = "hv", # Add medians survival
-#            xlab="Time in months",
-#            pval=TRUE,
-#            conf.int = TRUE,
-#            tables.theme = theme_cleantable(),
-#            #palette = c("#FF9E29", "#86AA00"),
-#            ggtheme = theme_gray()
-#            ) # Change ggplot2 theme
+#setEPS()
+#postscript("whatever.eps")
 
+ggsurvplot(fit1,pval = TRUE,
+           #risk.table = TRUE,
+           legend=c(0.8,0.9),
+           legend.labs=c("High-High-Low (42)","WEX High others (84)","Low-High-Low (19)","WEX Low Others (102)"),
+           legend.title="Categories",
+           xlab='Time in Months')+ggtitle("TCGA Bladder Cohort")
 
-#ggsave(filename = "survival_svgg16.eps",
-#       fallback_resolution = 600,
-#       device = cairo_ps)
+#dev.off()
 
-
+ggsave(filename = "km_4class_f2.eps",
+              fallback_resolution = 600,
+              device = cairo_ps)

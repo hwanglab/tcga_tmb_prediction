@@ -1,8 +1,5 @@
-# function to plot KM curves
-# low_tmb_high_entropy vs low_tmb_low_entropy (low tmb is the ground truth)
-# without considering intermediate level patients
+# High-High-Low vs Others in High by WEX vs Low by WEX
 
-# load packages
 library(survival)
 library(survminer)
 library(dplyr)
@@ -15,7 +12,7 @@ pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "She
 
 
 path <- system.file("mat-files", package = "R.matlab")
-pathname <- file.path("E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/step11)_tmb_map_process/features/", "feat.mat")
+pathname <- file.path("./features/", "feat.mat")
 blca_pre<-readMat(pathname)
 pid<-vector()
 plabel<-vector()
@@ -23,10 +20,10 @@ pvalue<-vector()
 #plabel0<-vector()
 plabel1<-vector()
 
-
-for (kk in 1:length(blca_pre[[1]])/3){
+temp<-length(blca_pre[[1]])/3
+for (kk in 1:temp){
   pid[kk]<-blca_pre[[1]][[kk]]
-  pvalue[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])/3]]
+  pvalue[kk]<-blca_pre[[1]][[kk+temp]]
   #plabel0[kk]<-blca_pre[[1]][[kk+length(blca_pre[[1]])*2/3]]
   
 }
@@ -42,7 +39,7 @@ for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),1,23)
   for (jj in 1:length(pid_pred_gt$`Patient ID`))
     if (temp_pID==substring(as.character(pid_pred_gt$`Patient ID`[jj]),2,24)){
-      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj],'-',plabel1[kk],sep="")
+      plabel[kk]<-paste(pid_pred_gt$Ground_Truths[jj],'-',pid_pred_gt$Automatic_Predictions[jj],'-',plabel1[kk],sep="")
       break
     }
 }
@@ -64,13 +61,17 @@ pid2<-vector()
 plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
-  if (plabel[kk]=="'Low'-Low") {
+  if (plabel[kk]=="'High'-'High'-Low") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if(plabel[kk]=="'Low'-High"){
+  } else if (plabel[kk]=="'High'-'High'-High" | plabel[kk]=="'High'-'Low'-High" | plabel[kk]=="'High'-'Low'-Low"){
     pid2[ind]<-pid[kk]
-    plabel2[ind]<-plabel[kk]
+    plabel2[ind]<-'Others in High'
+    ind<-ind+1
+  } else if (plabel[kk]=="'Low'-'High'-High" | plabel[kk]=="'Low'-'High'-Low" | plabel[kk]=="'Low'-'Low'-High" | plabel[kk]=="'Low'-'Low'-Low") {
+    pid2[ind]<-pid[kk]
+    plabel2[ind]<-'wex Low TMB'
     ind<-ind+1
   }
   else {
@@ -93,7 +94,7 @@ for (kk in 1:length(pid)){
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -160,25 +161,13 @@ surv_object<-Surv(time=blca_pred$futime,event=blca_pred$fustat)
 
 fit1<-survfit(surv_object~label_class,data=blca_pred)
 # summary(fit1)
-
-#setEPS()
-#postscript("whatever.eps")
-
+# 
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("Low-High (57)","Low-Low (64)"),
-           legend.title="Prediction categories",
+           legend.labs=c("High-High-Low (42)","WEX High others (84)","WEX Low (121)"),
+           legend.title="Categories",
            xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
-
-#dev.off()
-
-#legend=c(0.8,0.9),
-#legend.title="WES TMB Levels",
-#legend.labs=c("High (126)","Low (121)"),
-#risk.table = TRUE, 
-#palette = c("#FF9E29", "#86AA00"),
-#xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
 
 # ggsurvplot(fit1,
 #            #legend=c(0.8,0.9),
@@ -196,7 +185,7 @@ ggsurvplot(fit1,pval = TRUE,
 #            ) # Change ggplot2 theme
 
 
-#ggsave(filename = "survival_svgg16.eps",
+#ggsave(filename = "km_3class.eps",
 #       fallback_resolution = 600,
 #       device = cairo_ps)
 
