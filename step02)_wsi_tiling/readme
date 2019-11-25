@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
-Input: Given the whole slide image, and SVM tumor detector, this step first detect tumor blocks and then save them as tiles into another folder
+Input: Given the whole slide image, and SVM tumor detector, this step first detects tumor blocks and then saves them as tiles into another folder
 
 Output: Tumor tiles of the whole slide image
 ----------------------------------------------------------------------
