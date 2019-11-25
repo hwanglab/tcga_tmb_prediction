@@ -1,6 +1,11 @@
 #This folder contains the program and intermediate results to build tumor_classifier
 
-The running procedures:
+------------------------------------------------------------------------------------
+Input: given annotated tumor and on-tumor regions in the WSIs, this step builds a tumor detector using only LBP texture features with SVM classifier
+Output: SVM Tumor Detector
+------------------------------------------------------------------------------------
+To reprodcuce my results, follow the following steps:
+
 1) main_feats_extraction_from_gt.m (save features for tumor patches)
 2) main_feats_organization_tumor_nontumor.m (organize extracted image features)
 3) two options you can select:
