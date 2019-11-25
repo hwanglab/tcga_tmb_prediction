@@ -1,4 +1,4 @@
-This folder contains the program and intermediate results to build tumor_classifier
+#This folder contains the program and intermediate results to build tumor_classifier
 
 The running procedures:
 1) main_feats_extraction_from_gt.m (save features for tumor patches)
