@@ -16,3 +16,6 @@ To reprodcuce my results, follow the following steps:
 
 The SVM_cubic_model and SVM_FineGaussian_model are two our trained SVM tumor detection classifier
 You can use them to make tumor detection directly
+
+svm_tumor_detection_evaluation.m -> testing trained tumor detectors
+roc_tumor_detection_blca.m -> plot ROC curve for tumor detection
