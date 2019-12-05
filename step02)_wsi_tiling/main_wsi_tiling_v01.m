@@ -4,6 +4,7 @@
 % image patches
 % author: Hongming Xu, Ph.D., Cleveland Clinic
 % feel free to use it, but should give original author credits
+% questions: mxu@ualberta.ca
 
 close all;clc;
 addpath(genpath('E:\matlab_repository\toolboxes\openslide-matlab-master\'));
@@ -35,9 +36,9 @@ thrWhite=210;
 numc=50;
 tileSize=[256,256]./2;
 
-%imagePath={'E:\blca_mutationBurden\blca_wsi\'}; % 362 well-quality
+%imagePath={'E:\data\blca_mutationBurden\blca_wsi\'}; % 362 well-quality
 %patients
-imagePath={'E:\blca_mutationBurden\tumor_detection\'}; % 24 not very good quality images
+imagePath={'E:\data\blca_mutationBurden\blca_wsi2\'}; % 24 not very good quality images
 
 debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\debug_output\';
 
@@ -46,7 +47,7 @@ clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output
 apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\apfreq\';
 
 %0) load saved svm tumor detection classifier
-load(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step1)_tumor_versus_nontumor\','SVM_cubic_model.mat'));
+load(strcat('../step01)_tumor_versus_nontumor/','SVM_cubic_model.mat'));
 
 for ip=1:length(imagePath)
     
@@ -165,7 +166,7 @@ for ip=1:length(imagePath)
         end
         
         feat_out=[feat40,feat72,freq'];
-        save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
+        %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         
         %saveas(gcf,strcat(debugOutput{ip},imgs(im).name,'.jpg'));
         %close all;

@@ -2,8 +2,8 @@
 %% this is the version used for bioinformatic paper
 
 close all;clc;
-addpath(genpath('E:\matlab_repository\toolboxes\openslide-matlab-master\'));
-addpath(genpath('E:\matlab_repository\misc\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\openslide-matlab-master\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\my_codes\'));
 
 % addpath(genpath('E:/matlab_repository/toolboxes/spams-matlab-v2.6-2017-02-27/spams-matlab-v2.6/'));
 % addpath(genpath('E:/Hongming/resources/CodeRelease_ColorNormalization-master/SNMF stain separation and color normalization/'));
@@ -31,13 +31,13 @@ numc=50;
 tileSize=[256,256]./2;
 
 %imagePath={'E:\blca_mutationBurden\blca_wsi\'};
-imagePath={'E:\blca_mutationBurden\tumor_detection\'}; % 24 images
+imagePath={'E:\data\blca_mutationBurden\blca_wsi2\'}; % 24 images
 debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\debug_output\';
 
 featureOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\11)norm_20x_all\1)lbp\'};
 clusterImgOutput='E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\11)norm_20x_all\';
 
-load(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step1)_tumor_versus_nontumor\','SVM_cubic_model.mat'));
+load(strcat('../step01)_tumor_versus_nontumor/','SVM_cubic_model.mat'));
 
 for ip=1:length(imagePath)
     

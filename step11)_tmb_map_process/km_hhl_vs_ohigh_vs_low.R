@@ -165,7 +165,7 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("High-High-Low (42)","WEX High others (84)","WEX Low (121)"),
+           legend.labs=c("High-High-Low (42)","WES High others (84)","WES Low (121)"),
            legend.title="Categories",
            xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
 
@@ -185,8 +185,8 @@ ggsurvplot(fit1,pval = TRUE,
 #            ) # Change ggplot2 theme
 
 
-#ggsave(filename = "km_3class.eps",
-#       fallback_resolution = 600,
-#       device = cairo_ps)
+ggsave(filename = "km_3class.eps",
+       fallback_resolution = 600,
+       device = cairo_ps)
 
 

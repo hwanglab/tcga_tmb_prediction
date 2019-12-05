@@ -1,37 +1,28 @@
 %% main function
-%% this is the version used for bioinformatic paper
+%% for heatmap visulization on TMB prediction
+% By Hongming Xu, CCF, 2019
+% mxu@ualberta.ca
 
 close all;clc;
-addpath(genpath('E:\matlab_repository\toolboxes\openslide-matlab-master\'));
-addpath(genpath('E:\matlab_repository\misc\'));
-addpath(genpath('E:\matlab_repository\toolboxes\cbrewer\'));
-
-% addpath(genpath('E:/matlab_repository/toolboxes/spams-matlab-v2.6-2017-02-27/spams-matlab-v2.6/'));
-% addpath(genpath('E:/Hongming/resources/CodeRelease_ColorNormalization-master/SNMF stain separation and color normalization/'));
-% targetpath='E:\Hongming\projects\tcga-bladder-mutationburden\nuclei_segmentation_imgs\tissue_images_normalized\TCGA-E2-A14V-01Z-00-DX1.png';
-% nstains=2;
-% lambda=0.1;  % Use smaller values of the lambda (0.01-0.1) for better reconstruction. however, if the normalized image seems not fine, increase or decrease the value accordingly.
-% [Wi, Hi, Hiv]=stainsep(target,nstains,lambda);
-% para.Wi=Wi;
-% para.Hi=Hi;
-% para.Hiv=Hiv;
-% para.nstains=nstains;
-% para.lambda=lambda;
-
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\openslide-matlab-master\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\my_codes\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\cbrewer\'));
 
 magCoarse=2.5;
 magFine=5;
-mag10=20;
-mag20=20;
+%mag10=20;
+%mag20=20;
 ppt=0.8; % above this threshold is selected as segmented regions
 debug=0;
+savePredMap=0;
+showHeatmap=1;
 
 thrWhite=210;
 numc=50;
 
 tileSize=[256,256]./2;
 
-imagePath={'E:\blca_mutationBurden\blca_wsi\'}; % 362 well-quality
+imagePath={'E:\data\blca_mutationBurden\blca_wsi\'}; % 362 well-quality
 %patients
 %imagePath={'E:\blca_mutationBurden\tumor_detection\'}; % 24 not very good quality images
 
@@ -41,9 +32,9 @@ featureOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\
 clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_E_CN\'};
 apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\apfreq\';
 
-load(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step1)_tumor_versus_nontumor\','SVM_cubic_model.mat'));
+load(strcat('..\step01)_tumor_versus_nontumor\','SVM_cubic_model.mat'));
 
-score_path='E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step4)_wsi_classification\two_class_distinction\prediction_scores\';
+score_path='..\step04)_wsi_classification\prediction_scores\';
 %heatmap_output='E:\Hongming\projects\tcga-bladder-mutationburden\heatmap_output\';
 tmb_output='E:\Hongming\projects\tcga-bladder-mutationburden\tmb_blca\';
 
@@ -55,7 +46,7 @@ for ip=1:length(imagePath)
     imgs=dir(fullfile(imgPath,'*.svs'));
     
     
-    for im=1:numel(imgs)
+    for im=142:numel(imgs)
         file1=fullfile(imgPath,imgs(im).name);
         fprintf('filename=%s\n%d',file1,im);
         slidePtr=openslide_open(file1);
@@ -69,7 +60,7 @@ for ip=1:length(imagePath)
             load(strcat(score_path,mats_cc.name));
             
             heat_cc=dir(fullfile(tmb_output,strcat(imgs(im).name(1:23),'*.mat')));
-            if isempty(heat_cc) % if not got it in the first time
+            if ~isempty(heat_cc) % if not got it in the first time
                 
                 %1) read magCoarse image
                 RGB=wsi_read(slidePtr,objectivePower,downsampleFactors,width,height,magCoarse);
@@ -77,7 +68,7 @@ for ip=1:length(imagePath)
                 %2) pre-processing to get binary masks
                 [bwTissue]=wsi_preprocess_tissue(RGB,thrWhite,tileSize(1)*tileSize(2));
                 
-                HE=extract_hestains(RGB,bwTissue);
+                %HE=extract_hestains(RGB,bwTissue);
                 
                 %3) get image tile locations
                 [top_left,bottom_right]=xu_SelectImageTiles_VII(bwTissue,ppt,tileSize);
@@ -130,30 +121,36 @@ for ip=1:length(imagePath)
                         cc=idx(i);
                         ind=find(cc==indf);
                         %if ind<=length(foldScores)
-                            ss=foldScores(ind,2);
-                            tl=top_left_tumor(i,:);
-                            br=bottom_right_tumor(i,:);
-                            pp_map(tl(1):br(1),tl(2):br(2))=ss;
+                        ss=foldScores(ind,2);
+                        tl=top_left_tumor(i,:);
+                        br=bottom_right_tumor(i,:);
+                        pp_map(tl(1):br(1),tl(2):br(2))=ss;
                         %end
                     end
-                    tmb_map=pp_map;
-                    save(strcat(tmb_output,imgs(im).name(1:23),'.mat'),'tmb_map','top_left_tumor','bottom_right_tumor');
                     
-%                     % use our found matlab functions
-%                     pp_map2=imresize(pp_map,0.125,'nearest');
-%                     %pp_map2(pp_map2<0.01)=NaN;
-%                     CT=cbrewer('div', 'RdYlBu', 64);
-%                     colormap(flipud(CT));
-%                     heatmap_v0(pp_map2,[],[],[], 'NaNColor', [1 1 1]);
-%                     
-%                     cbh = colorbar('southoutside') ; %Create Colorbar
-%                     cbh.Ticks = linspace(min(min(pp_map2)), max(max(pp_map2)), 2) ; %Create 8 ticks from zero to 1
-%                     temp=cell(1,2);
-%                     temp{1}='Low TMB';
-%                     temp{2}='High TMB';
-%                     cbh.TickLabels = temp;
-%                     saveas(gcf,strcat(heatmap_output,imgs(im).name,'_uncertain.jpg'));
-%                     close all;
+                    if savePredMap==1
+                        tmb_map=pp_map;
+                        save(strcat(tmb_output,imgs(im).name(1:23),'.mat'),'tmb_map','top_left_tumor','bottom_right_tumor');
+                    end
+                    
+                    if showHeatmap==1
+                        
+                        % use our found matlab functions
+                        pp_map2=imresize(pp_map,0.125,'nearest');
+                        %pp_map2(pp_map2<0.01)=NaN;
+                        CT=cbrewer('div', 'RdYlBu', 64);
+                        colormap(flipud(CT));
+                        heatmap_v0(pp_map2,[],[],[], 'NaNColor', [1 1 1]);
+                        
+                        cbh = colorbar('southoutside') ; %Create Colorbar
+                        cbh.Ticks = linspace(min(min(pp_map2)), max(max(pp_map2)), 2) ; %Create 8 ticks from zero to 1
+                        temp=cell(1,2);
+                        temp{1}='Low TMB';
+                        temp{2}='High TMB';
+                        cbh.TickLabels = temp;
+                        %saveas(gcf,strcat(heatmap_output,imgs(im).name,'_uncertain.jpg'));
+                        close all;
+                    end
                 else
                     fprintf('filename=%s\n%d--no matching!!!!!!!!!!!!',file1,im);
                 end
@@ -165,46 +162,8 @@ for ip=1:length(imagePath)
             %plot_url = response.url;
             %heatmap(pp_map2,[],[],[],'ColorMap', @cool, 'NaNColor', [1 1 1], 'colorbar', true);
             
-            
-            %             feat40=feat_tumor(indf,:);
-            %
-            %             if debug==1
-            %                 % for generating figures
-            %                 %             mpdc10 = distinguishable_colors(length(indf));
-            %                 %             temp=top_left(logical(ylabel),:);
-            %                 %             figure,imshow(RGB)
-            %                 %             for i=1:size(temp,1)
-            %                 %                 tl=temp(i,:);
-            %                 %                 ind=find(idx(i)==indf);
-            %                 %                 pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
-            %                 %                 hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
-            %                 %                 hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
-            %                 %             end
-            %
-            %                 %             temp2=temp(indf,:);
-            %                 %
-            %                 %             for t=1:size(temp2,1)
-            %                 %                 tp=temp2(t,:);
-            %                 %                 hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
-            %                 %             end
-            %
-            %
-            %                 temp=top_left(logical(ylabel),:);
-            %                 temp2=temp(indf,:);
-            %                 for t=1:size(temp2,1)
-            %                     tp=temp2(t,:);
-            %                     hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15);
-            %                     hold on,text(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,num2str(idx(t)));
-            %                 end
-            %saveas(gcf,strcat(debugOutput,imgs(im).name,'.jpg'));
-            %close all;
-            %end
         end
-        
-        
-        
-        
-        
+ 
     end
 end
 

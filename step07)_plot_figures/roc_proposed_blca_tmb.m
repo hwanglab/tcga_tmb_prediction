@@ -91,7 +91,7 @@ hold on,h3=line_fewer_markers(x2_g,y2_g,7,'*','Color',[0.8 0.5 0],'Spacing', 'cu
 
 hold on,h4=line_fewer_markers(x4_g,y4_g,7,'d','Color',[0 0.8 0],'Spacing', 'curve','markersize',6,'LineWidth',1);
 hold on,h5=line_fewer_markers(x5_g,y5_g,7,'','Color',[0 0.4470 0.7410],'Spacing', 'curve','markersize',6,'LineWidth',1);
-hold on,h6=line_fewer_markers(x6_g,y6_g,7,'ks','Spacing', 'curve','markersize',6,'LineWidth',1.5);
+hold on,h6=line_fewer_markers(x6_g,y6_g,7,'ks','Spacing', 'curve','markersize',6,'LineWidth',1);
 
 x=0:0.05:1;
 y=0:0.05:1;

@@ -10,6 +10,7 @@ library(dplyr)
 library(readxl)
 library(R.matlab)
 library(openxlsx)
+library(ggplot2)
 
 data_path0<-"E:/Hongming/projects/tcga-bladder-mutationburden/heatmap_blca/"
 pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "Sheet1")
@@ -135,7 +136,7 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE,
            legend=c(0.8,0.9),
-           legend.labs=c("High-High-Low (42)","WEX High others (84)","Low-High-Low (19)","WEX Low Others (102)"),
+           legend.labs=c("High-High-Low (42)","WES High others (84)","Low-High-Low (19)","WES Low Others (102)"),
            legend.title="Categories",
            xlab='Time in Months')+ggtitle("TCGA Bladder Cohort")
 

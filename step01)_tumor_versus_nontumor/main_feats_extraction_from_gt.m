@@ -3,13 +3,14 @@
 % 1) read mannualy labeled regions (e.g., tumor) from .svs file,
 % 2) generate small patches, compute and save features for training a tumor classifer
 % V0.0: test and use for TCGA bladder pathology slides
+% 3) email me for if you cannot run the program: mxu@ualberta.ca
 
 clear vars;
 
-addpath(genpath('E:\matlab_repository\toolboxes\openslide-matlab-master\'));            % add openslide package
-addpath(genpath('E:\matlab_repository\misc\'));                                         % add reqiured functions
-addpath(genpath('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\'));   % add reqiured functions
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\openslide-matlab-master\'));            % add openslide package
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\my_codes\'));                                     % add reqiured functions
 
+%% Z disk: hwangt-share network disk
 xmlfolder={'Z:\Datasets\TCGA_BLCA_WSI_TumorGT\tumorWithLabel\',...                      % image path with annotated .xml files
     'Z:\Datasets\TCGA_BLCA_WSI_TumorGT\nontumorWithLabel\'};
 imagePath={'Z:\Datasets\TCGA_BLCA_WSI_TumorGT\tumorWithLabel\',...                      % image path with .svs format slides
@@ -98,11 +99,11 @@ for ip=1:length(imagePath)
 
             % save computed features into .mat file for training tumor
             % detection classifier
-%             PatientID=imgs(im).name(1:23);
-%             Patname=strcat(PatientID,'.mat');
-%             save(strcat(featureOutput{ip},Patname),'feat');
+            PatientID=imgs(im).name(1:23);
+            Patname=strcat(PatientID,'.mat');
+            save(strcat(featureOutput{ip},Patname),'feat');
         end
     end
 end
-t=0;
+
 

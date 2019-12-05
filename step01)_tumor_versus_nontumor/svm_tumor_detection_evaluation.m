@@ -5,7 +5,7 @@
 % author
 
 
-function svm_tumor_detection_paper_results
+function svm_tumor_detection_evaluation
 
 clear vars;
 featureoutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\1)tumor_prediction\tumor\',...
@@ -115,9 +115,6 @@ for cc=1:ItNum
     specificity=sum(testingResponse(testingResponse==0)==foldPrediction(testingResponse==0))/(sum(testingResponse==0));
     sensitivity=sum(testingResponse(testingResponse==1)==foldPrediction(testingResponse==1))/(sum(testingResponse==1))
     
-    %validm=[validm,validations];
-    %correctPredictions = (validations == labels);
-    %ACC=[ACC;sum(correctPredictions)/numel(labels)];
     
 end
 
