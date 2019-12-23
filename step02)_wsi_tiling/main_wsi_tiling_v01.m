@@ -1,36 +1,23 @@
-%% main function
-%% this is the version used for bioinformatics paper
-% the main function to process .svs image for save AP clustering selected
+%% -----main function-----
+% the main function to process .svs image for saving AP clustering selected
 % image patches
 % author: Hongming Xu, Ph.D., Cleveland Clinic
 % feel free to use it, but should give original author credits
 % questions: mxu@ualberta.ca
+% code tested on Win10 system
 
 close all;clc;
-addpath(genpath('E:\matlab_repository\toolboxes\openslide-matlab-master\'));
-addpath(genpath('E:\matlab_repository\misc\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\openslide-matlab-master\'));
+addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\my_codes\'));
 
-% ------------- for image color-normaliztion, due to cmputational
-% complexity not used
-% addpath(genpath('E:/matlab_repository/toolboxes/spams-matlab-v2.6-2017-02-27/spams-matlab-v2.6/'));
-% addpath(genpath('E:/Hongming/resources/CodeRelease_ColorNormalization-master/SNMF stain separation and color normalization/'));
-% targetpath='E:\Hongming\projects\tcga-bladder-mutationburden\nuclei_segmentation_imgs\tissue_images_normalized\TCGA-E2-A14V-01Z-00-DX1.png';
-% nstains=2;
-% lambda=0.1;  % Use smaller values of the lambda (0.01-0.1) for better reconstruction. however, if the normalized image seems not fine, increase or decrease the value accordingly.
-% [Wi, Hi, Hiv]=stainsep(target,nstains,lambda);
-% para.Wi=Wi;
-% para.Hi=Hi;
-% para.Hiv=Hiv;
-% para.nstains=nstains;
-% para.lambda=lambda;
-% ------------ end for image color normalization
 
 magCoarse=2.5;
 magFine=5;
 mag10=20;
 mag20=20;
-ppt=0.8;         %above this threshold is selected as segmented regions
-debug=1;
+ppt=0.8;         % above this threshold is selected as segmented regions
+debug=0;
+LBP_baseline=false; % if false not computing LBP baseline texture features for comparison
 
 thrWhite=210;
 numc=50;
@@ -119,23 +106,23 @@ for ip=1:length(imagePath)
         % for generating figures shown in the paper
         if debug==1
             % for generating figures
-%             mpdc10 = distinguishable_colors(length(indf));
-%             temp=top_left(logical(ylabel),:);
-%             figure,imshow(RGB)
-%             for i=1:size(temp,1)
-%                 tl=temp(i,:);
-%                 ind=find(idx(i)==indf);
-%                 pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
-%                 hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
-%                 hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
-%             end
+            %             mpdc10 = distinguishable_colors(length(indf));
+            %             temp=top_left(logical(ylabel),:);
+            %             figure,imshow(RGB)
+            %             for i=1:size(temp,1)
+            %                 tl=temp(i,:);
+            %                 ind=find(idx(i)==indf);
+            %                 pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
+            %                 hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
+            %                 hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
+            %             end
             
-%             temp2=temp(indf,:);
-%             
-%             for t=1:size(temp2,1)
-%                 tp=temp2(t,:);
-%                 hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
-%             end
+            %             temp2=temp(indf,:);
+            %
+            %             for t=1:size(temp2,1)
+            %                 tp=temp2(t,:);
+            %                 hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
+            %             end
             
             
             temp=top_left(logical(ylabel),:);
@@ -156,17 +143,19 @@ for ip=1:length(imagePath)
         bottom_right_np=bottom_right_tumor(indf,:);
         %%top_left_np=top_left_tumor;
         %%bottom_right_np=bottom_right_tumor;
-        if any(mag==mag10)
-            levelforRead=find(mag==mag10,1);
-            feat72=xu_textureComputation_II(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse);
-        else
-            magToUseAbove=min(mag(mag>mag10));
-            levelforRead=find(mag==magToUseAbove);
-            feat72=xu_textureComputation_II(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,magToUseAbove);
+        if LBP_baseline==true
+            if any(mag==mag10)
+                levelforRead=find(mag==mag10,1);
+                feat72=xu_textureComputation_II(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse);
+            else
+                magToUseAbove=min(mag(mag>mag10));
+                levelforRead=find(mag==magToUseAbove);
+                feat72=xu_textureComputation_II(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,magToUseAbove);
+            end
+            
+            feat_out=[feat40,feat72,freq'];
+            %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         end
-        
-        feat_out=[feat40,feat72,freq'];
-        %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         
         %saveas(gcf,strcat(debugOutput{ip},imgs(im).name,'.jpg'));
         %close all;
@@ -176,19 +165,17 @@ for ip=1:length(imagePath)
         if any(mag==mag10)
             levelforRead=find(mag==mag10,1);
             
-            feat_cell=xu_cellular_feature_test(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE);
+            feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE);
             
         else
             magToUseAbove=min(mag(mag>mag10));
             levelforRead=find(mag==magToUseAbove);
             
-            feat_cell=xu_cellular_feature_test(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE,magToUseAbove);
+            feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE,magToUseAbove);
             
         end
         
         save(strcat(apfreqOutput,imgs(im).name,'.mat'),'feat_cell');
-        %feat_out=[feat72];
-        %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         
         
     end
