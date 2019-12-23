@@ -1,8 +1,9 @@
+
+% main purpose: generating heatmaps
+
 % this function is used for evaluating bladder TMB prediction in the paper
 % we test it for 2-class classifications: low TMB vs high TMB
 % leave-one-out evaluation is found to be the best
-
-% main purpose: generating heatmaps
 
 % author: Hongming Xu, Cleveland Clinic, Jan 2019
 % you may modify or use it, but you need give the credit for original

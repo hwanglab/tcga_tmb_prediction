@@ -42,7 +42,7 @@ end
 Ftrain=[];
 Ltrain=[];
 
-load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
+load('..\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens_Yunku.mat'); % Yunku provided values
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdensII.mat');     % by 5-20 thresholds
 

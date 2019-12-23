@@ -2,7 +2,7 @@
 % we test it for 2-class classifications: low TMB vs high TMB
 % leave-one-out evaluation is found to be the best
 
-% main purpose: generating heatmaps
+% main purpose: generating heatmaps for mid tmb patients
 
 % author: Hongming Xu, Cleveland Clinic, Jan 2019
 % you may modify or use it, but you need give the credit for original
