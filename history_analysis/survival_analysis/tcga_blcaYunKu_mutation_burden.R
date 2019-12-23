@@ -7,7 +7,7 @@ library(readxl)
 library(R.matlab)
 library(openxlsx)
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"../../"
 blca_data<-read_excel(paste(data_path,"blca_TMB.xlsx",sep=""),sheet="Sheet1")
 tmb<-blca_data$`TMB values`
 LI<-0.33
@@ -69,39 +69,3 @@ fit1<-survfit(surv_object~TMB_class,data=blca)
 # 
 ggsurvplot(fit1,data=blca,pval=TRUE)
 
-
-
-# # import the ovarian cancer dataset
-# data(ovarian)
-# glimpse(ovarian)
-# 
-# # dichotomize the age and change data labels
-# ovarian$rx <- factor(ovarian$rx,
-#                      levels=c("1","2"),
-#                      labels=c("A","B"))
-# 
-# ovarian$resid.ds<-factor(ovarian$resid.ds,
-#                          level=c("1","2"),
-#                          labels=c("no","yes"))
-# 
-# ovarian$ecog.ps<-factor(ovarian$ecog.ps,
-#                         levels=c("1","2"),
-#                         labels=c("good","bad"))
-# 
-# # Data seems to be biomodal
-# hist(ovarian$age)
-# 
-# ovarian<-mutate(ovarian,age_group=ifelse(age>=50,"old","young"))
-# #ovarian <- ovarian %>% mutate(age_group = ifelse(age >=50, "old", "young"))
-# # %>% is called multiple times to "chain" functions together
-# # iris %>% head() %>% summary() is the same as: summary(head(iris))
-# ovarian$age_group<-factor(ovarian$age_group)
-# 
-# # fit survival data using the kaplan-Meier method
-# surv_object<-Surv(time=ovarian$futime,event=ovarian$fustat)
-# surv_object
-# 
-# fit1<-survfit(surv_object~rx,data=ovarian)
-# summary(fit1)
-# 
-# ggsurvplot(fit1,data=ovarian,pval=TRUE)

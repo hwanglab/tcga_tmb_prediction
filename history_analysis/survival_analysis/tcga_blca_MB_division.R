@@ -7,7 +7,7 @@ library(readxl)
 library(R.matlab)
 library(openxlsx)
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/Hongming_codes/"
+data_path<-"../../"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 tmb<-blca_data$`total number Single Nucleotide Variants`
 tmb<-tmb/50
