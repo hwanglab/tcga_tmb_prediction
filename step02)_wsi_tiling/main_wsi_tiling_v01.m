@@ -23,15 +23,18 @@ thrWhite=210;
 numc=50;
 tileSize=[256,256]./2;
 
-%imagePath={'E:\data\blca_mutationBurden\blca_wsi\'}; % 362 well-quality
+imagePath={'E:\data\blca_mutationBurden\blca_wsi2\'}; % 362 well-quality
 %patients
-imagePath={'E:\data\blca_mutationBurden\blca_wsi2\'}; % 24 not very good quality images
+%imagePath={'E:\data\blca_mutationBurden\blca_wsi2\','E:\data\blca_mutationBurden\blca_wsi\'}; % 24 not very good quality images
 
 debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\debug_output\';
 
 featureOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\1)lbp\'};
-clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_E_CN\'};
-apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\apfreq\';
+%clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_E_CN\'};
+%apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\apfreq\';
+
+clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\norm_test_ap10x\'};
+apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\norm_test_ap10x\apfreq\';
 
 %0) load saved svm tumor detection classifier
 load(strcat('../step01)_tumor_versus_nontumor/','SVM_cubic_model.mat'));
@@ -85,9 +88,21 @@ for ip=1:length(imagePath)
         [ylabel,scores]=trainedModel_SVM_cubic.predictFcn(ff);
         
         % 7) feature clustering (AP clustering)
-        feat_tumor=feat(logical(ylabel),:);
+        %feat_tumor=feat(logical(ylabel),:);   %% default feature selection
+        
         top_left_tumor=top_left(logical(ylabel),:);
         bottom_right_tumor=bottom_right(logical(ylabel),:);
+        
+        %% testing recommented by the reviewer -- clustering using features compuated at 10x
+        if any(mag==10) 
+            levelforRead=find(mag==10,1);
+            feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse);
+        else
+            magToUseAbove=min(mag(mag>10));
+            levelforRead=find(mag==magToUseAbove);
+            feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse,magToUseAbove);
+        end
+        %% end--testing
         
         feat_tumor_cluster=[feat_tumor,(top_left_tumor+bottom_right_tumor)/2];
         
@@ -101,7 +116,7 @@ for ip=1:length(imagePath)
             freq(t)=sum(idx==indf(t));
         end
         
-        feat40=feat_tumor(indf,:);
+        %feat40=feat_tumor(indf,:);
         
         % for generating figures shown in the paper
         if debug==1

@@ -41,8 +41,6 @@ switch meth
         disp('impossible options!!!!!!!!!!');
 end
 
-
-
 %% -- feature organization into a table structure---%%
 Ftrain=[];
 Ltrain=[];
@@ -50,7 +48,7 @@ Ltrain=[];
 Ftest=[];
 Ltest=[];
 
-load('../../blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
+load('..\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens_Yunku.mat'); % Yunku provided values
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdensII.mat');     % by 5-20 thresholds
 
@@ -108,8 +106,6 @@ for ip=1:length(featPath)
             disp('impossible~~~~~~');
             break;
         end
-        
-        
     end
 end
 
@@ -154,13 +150,13 @@ if PCA_usage==1
     trainingPredictors=pcaScores(:,:);
 end
 
+%% gaussian kernel or liner kernel
 template = templateSVM(...
     'KernelFunction', 'gaussian', ...
     'PolynomialOrder', [], ...
     'KernelScale', 'auto', ...
     'BoxConstraint', 1, ...
     'Standardize', true);
-
 classificationSVM = fitcecoc(...
     trainingPredictors, ...
     trainingResponse, ...
@@ -168,7 +164,6 @@ classificationSVM = fitcecoc(...
     'Coding', 'onevsone', ...
     'FitPosterior',true,...   % to obtain the posterior probabilities
     'ClassNames', [1; 3]);
-
 
 if PCA_usage==1
     pcaTransformationFcn=@(x)(x-pcaCenters)*pcaCoefficients;
@@ -194,6 +189,10 @@ pred_bladder=cell(length(pred),2);
 pred_bladder(:,1)=patID;
 pred_bladder(pred==1,2)={'Low'};
 pred_bladder(pred==3,2)={'High'};
+
+FT2=table(pred_bladder(:,1),pred_bladder(:,2));
+FT2.Properties.VariableNames={'patient_names','preds'};
+writetable(FT2,'./pid_tmb_mid_gaussian.xlsx','Sheet',1)
 
 
 %save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');

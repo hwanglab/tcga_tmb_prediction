@@ -23,9 +23,11 @@ img_width, img_height = 1024, 1024
 
 img_path=['E:/data/blca_mutationBurden/blca_wsi/','E:/data/blca_mutationBurden/blca_wsi2/']
 
-train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/10)norm_test_20x/']
+#train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/10)norm_test_20x/'] # original patches
 
-save_features=False # if True you will save features into .mat files
+train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/norm_test_ap10x/']
+
+save_features=True # if True you will save features into .mat files
 
 #train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_E_TD/']
 #feat_output=['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)P_E_TD/3)xception/']
@@ -51,8 +53,11 @@ def save_bottlebeck_features(model_name):
         #4032 dimensional features
     elif model_name=='xception':
         model=xception.Xception(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False, pooling='avg')
-        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/',
-                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/']
+        #feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/',
+        #               'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/']
+
+        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/norm_test_ap10x/',
+                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/norm_test_ap10x/']
         #2048 dimensional features
     elif model_name=='inceptionv3':
         model=inception_v3.InceptionV3(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False, pooling='avg')
@@ -77,7 +82,7 @@ def save_bottlebeck_features(model_name):
     print(model.summary())
 
     #img_train_ids=get_train_img_id()
-    for ind in range(0, len(img_path)):
+    for ind in range(1, len(img_path)):
         path_ind = img_path[ind]
         #path_split=path_ind.split("/")
         images = os.listdir(path_ind)
@@ -88,7 +93,7 @@ def save_bottlebeck_features(model_name):
                 image_names = []
                 #patient_id='TCGA-2F-A9KT'
                 #patches=os.listdir(train_data_dir[ind]+patient_id+'*.png')
-                patches=glob.glob(train_data_dir[ind]+patient_id+'*.png')
+                patches=glob.glob(train_data_dir[0]+patient_id+'*.png')
 
                 for patch_name in patches:
                     patch_split=patch_name.split("\\")

@@ -38,8 +38,6 @@ switch meth
         disp('impossible options!!!!!!!!!!');
 end
 
-
-
 %% -- feature organization into a table structure---%%
 Ftrain=[];
 Ltrain=[];
@@ -47,7 +45,7 @@ Ltrain=[];
 Ftest=[];
 Ltest=[];
 
-load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
+load('E:\Hongming\projects\tcga-bladder-mutationburden\tcga_tmb_prediction\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens_Yunku.mat'); % Yunku provided values
 %load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdensII.mat');     % by 5-20 thresholds
 
@@ -107,20 +105,17 @@ for im=1:numel(mats)
     end
 end
 
-
 FT=table(Ftrain,Ltrain);
 FT.Properties.VariableNames={'features','classes'};
 
 %saveName=strcat(featmatoutput,'FT.mat');
 %save(saveName,'FT')
 
-
 %% ---SVM training and leave-one-out prediction ---%
-score_output='E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step4)_wsi_classification\two_class_distinction\prediction_scores_mid\';
+score_output='E:\Hongming\projects\tcga-bladder-mutationburden\tcga_tmb_prediction\step05)_heatmap_entropy\prediction_scores_mid\';
 
 labels=Ltrain;
 feats=Ftrain;
-
 
 ComNum=100;       % number of PCA components, might be changed for different methods!!!!!!!!!!
 PCA_usage=1;      % whether use PCA
@@ -128,9 +123,7 @@ PCA_usage=1;      % whether use PCA
 foldss=[];
 pred=[];
 
-
 rng(100); % for the same indice we could generate
-
 
 trainingPredictors=feats;
 trainingResponse=labels;
@@ -201,13 +194,10 @@ for kk=1:length(patID)
     coeff00=repmat(coeff,1,size(image_features,2));
     feat_mean=sum(image_features.*coeff00,1);
     
-    
     [foldPrediction,foldScores]=validationPredictionFcn(image_features);
     
     save(strcat(score_output,pid,'.mat'),'foldScores'); % used for
     %generating heatmaps
-    
-    
     
     lowN=sum((foldPrediction==1).*apn);
     highN=sum((foldPrediction==3).*apn);

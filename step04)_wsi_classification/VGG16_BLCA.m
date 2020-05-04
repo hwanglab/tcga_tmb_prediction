@@ -1,4 +1,4 @@
-% evaluation for tcga_luad tmb prediction
+% evaluation for tcga_blca tmb prediction
 % result reported in the paper
 % author: Hongming Xu, CCF, 2019
 % questions: mxu@ualberta.ca

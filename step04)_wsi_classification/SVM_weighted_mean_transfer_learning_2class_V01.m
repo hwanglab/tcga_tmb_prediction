@@ -13,7 +13,7 @@ clear vars;
 
 %% --- these are the indictors which testing we are performing---%
 %  --- for more detail experiments see the paper description ---%
-techs={'P_E_TD','P_E_CN','P_InceptionV3','P_Resnet50','P_Xception'};
+techs={'P_E_TD','P_E_CN','P_InceptionV3','P_Resnet50','P_Xception','AP_10X'};
 meth=techs{5}; % 1,2,3,4,5 corresponding different testings
 
 switch meth
@@ -32,6 +32,9 @@ switch meth
     case 'P_Xception'
         ap_cluster={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)norm_test_20x\apfreq\'};
         featPath={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)norm_test_20x\4)xception\'};
+    case 'AP_10X'
+        ap_cluster={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\norm_test_ap10x\apfreq\'};
+        featPath={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\norm_test_ap10x\xception\'};
     otherwise
             disp('impossible options!!!!!!!!!!');
 end
@@ -98,8 +101,6 @@ for ip=1:length(featPath)
             disp('impossible~~~~~~');
             break;
         end
-        
-        
     end
 end
 
@@ -108,7 +109,6 @@ FT.Properties.VariableNames={'features','classes'};
 
 %saveName=strcat(featmatoutput,'FT.mat');
 %save(saveName,'FT')
-
 
 %% ---SVM training and leave-one-out prediction ---%
 labels=Ltrain;
@@ -140,8 +140,7 @@ for cc=1:ItNum
         OriTrain=~OriTest;
         trainingPredictors=feats(OriTrain,:);
         trainingResponse=labels(OriTrain,:);
-        
-        
+       
         % predict for each selected tile
         if PCA_usage==1
             
@@ -181,11 +180,9 @@ for cc=1:ItNum
             validationPredictionFcn=@(x)svmPredictFcn(x);
         end
         
-        
         testingPredictors=feats(OriTest,:);
         testingResponse=labels(OriTest);
         [foldPrediction,foldScores]=validationPredictionFcn(testingPredictors);
-        
         
         validations(OriTest)=foldPrediction;
         validationScores(OriTest,:)=foldScores;
@@ -193,7 +190,6 @@ for cc=1:ItNum
     
     correctPredictions = (validations == labels);
     ACC=[ACC;sum(correctPredictions)/numel(labels)];                            %72.73
-    
     
     specificity=sum(labels(labels==1)==validations(labels==1))/(sum(labels==1));%75.00
     sensitivity=sum(labels(labels==3)==validations(labels==3))/(sum(labels==3));%70.54
@@ -224,6 +220,10 @@ pred_bladder(pred==1,2)={'Low'};
 pred_bladder(pred==3,2)={'High'};
 pred_bladder(labels==1,3)={'Low'};
 pred_bladder(labels==3,3)={'High'};
+
+FT2=table(pred_bladder(:,1),pred_bladder(:,2));
+FT2.Properties.VariableNames={'patient_names','preds'};
+writetable(FT2,'./pid_tmb_pred.xlsx','Sheet',1)
 
 %save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');
 % CC=round(CC);

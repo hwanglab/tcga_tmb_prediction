@@ -112,7 +112,7 @@ FT.Properties.VariableNames={'features','classes'};
 
 
 %% ---SVM training and leave-one-out prediction ---%
-score_output='E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step4)_wsi_classification\two_class_distinction\prediction_scores\';
+score_output='E:\Hongming\projects\tcga-bladder-mutationburden\tcga_tmb_prediction\step05)_heatmap_entropy\prediction_scores\';
 
 labels=Ltrain;
 feats=Ftrain;
@@ -143,7 +143,6 @@ for cc=1:ItNum
         OriTrain=~OriTest;
         trainingPredictors=feats(OriTrain,:);
         trainingResponse=labels(OriTrain,:);
-        
         
         % predict for each selected tile
         if PCA_usage==1
@@ -197,7 +196,6 @@ for cc=1:ItNum
             validationPredictionFcn=@(x)svmPredictFcn(x);
         end
         
-        
         %testingPredictors=feats(OriTest,:);
         
         pid=patID{OriTest};
@@ -219,8 +217,6 @@ for cc=1:ItNum
         %save(strcat(score_output,pid,'.mat'),'foldScores'); % used for
         %generating heatmaps
         
-        
-        
         lowN=sum((foldPrediction==1).*apn);
         highN=sum((foldPrediction==3).*apn);
         if lowN>highN
@@ -235,8 +231,7 @@ for cc=1:ItNum
         validations(OriTest)=foldPrediction2;
         validationScores(OriTest,:)=foldScores2;
     end
-    
-    
+   
     correctPredictions = (validations == labels);
     ACC=[ACC;sum(correctPredictions)/numel(labels)];                            
     
