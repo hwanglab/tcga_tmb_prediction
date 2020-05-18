@@ -3,7 +3,7 @@ Using transfer learning to predict tumor mutational burden from whole slide imag
 
 Main author: Hongming Xu, CCF, 2019
 
-For contacts: xuh3@ccf.org, or, mxu@ccf.org
+For contacts: xuh3@ccf.org, or, mxu@ualberta.ca
 
 if you want to reproduce our studies, please follows step1)-step4)
 
