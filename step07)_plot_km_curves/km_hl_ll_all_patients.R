@@ -1,6 +1,5 @@
 # function to plot KM curves
-# high_low vs high_low vs low_high vs low_low
-# considering all high, low and intermediate level patients
+# high_low vs low_low for all patients
 
 # load packages
 library(survival)
@@ -51,22 +50,17 @@ for (kk in 1:length(pid)){
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
   } else if (plabel[kk]=="High-High"){
-    pid2[ind]<-substring(pid[kk],2,24)
-    plabel2[ind]<-plabel[kk]
-    ind<-ind+1
+    print('skip!')
   } else if (plabel[kk]=="Low-Low") {
     pid2[ind]<-substring(pid[kk],2,24)
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
   } else if(plabel[kk]=="Low-High"){
-    pid2[ind]<-substring(pid[kk],2,24)
-    plabel2[ind]<-plabel[kk]
-    ind<-ind+1
+    print('skip!')
   }
   else {
     print('skip!')
   }
-  
 }
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
@@ -129,11 +123,14 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("High-High (104)","High-Low (87)","Low-High (80)","Low-Low (97)"),
-           legend.title="Prediction categories",
-           xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
+           legend.labs=c("High-Low (76)","Low-Low (108)"),
+           legend.title="Categories",
+           xlab="Time in months")+ggtitle("Whole Bladder Cohort")
 
-dev.off()
+#dev.off()
+ggsave(filename = "km_2class_all2.eps",
+       fallback_resolution = 600,
+       device = cairo_ps)
 
 
 

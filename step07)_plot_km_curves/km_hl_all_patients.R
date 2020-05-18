@@ -1,6 +1,5 @@
 # function to plot KM curves
-# high_low vs high_low vs low_high vs low_low
-# considering all high, low and intermediate level patients
+# high vs low for all patients
 
 # load packages
 library(survival)
@@ -27,17 +26,13 @@ pid<-entropy_all$`patient ID`
 plabel<-vector()
 plabel1<-vector()
 
-tt<-quantile(as.numeric(pvalue),c(0.3,0.4,0.5,0.6,0.7))
-plabel1<-(pvalue>tt[3])
-plabel1[plabel1==TRUE]<-'High'
-plabel1[plabel1==FALSE]<-'Low'
 
 
 for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),2,24)
   for (jj in 1:length(pid_tmb_pred$`patient_names`))
     if (temp_pID==substring(as.character(pid_tmb_pred$`patient_names`[jj]),1,23)){
-      plabel[kk]<-paste(pid_tmb_pred$preds2[jj],'-',plabel1[kk],sep="")
+      plabel[kk]<-paste(pid_tmb_pred$preds[jj])
       break
     }
 }
@@ -46,27 +41,18 @@ pid2<-vector()
 plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
-  if (plabel[kk]=="High-Low") {
+  if (plabel[kk]=="High") {
     pid2[ind]<-substring(pid[kk],2,24)
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="High-High"){
+  } else if (plabel[kk]=="Low"){
     pid2[ind]<-substring(pid[kk],2,24)
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="Low-Low") {
-    pid2[ind]<-substring(pid[kk],2,24)
-    plabel2[ind]<-plabel[kk]
-    ind<-ind+1
-  } else if(plabel[kk]=="Low-High"){
-    pid2[ind]<-substring(pid[kk],2,24)
-    plabel2[ind]<-plabel[kk]
-    ind<-ind+1
-  }
+  } 
   else {
     print('skip!')
   }
-  
 }
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
@@ -127,13 +113,16 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 #postscript("whatever.eps")
 
 ggsurvplot(fit1,pval = TRUE,
-           #risk.table = TRUE, 
+           risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("High-High (104)","High-Low (87)","Low-High (80)","Low-Low (97)"),
-           legend.title="Prediction categories",
-           xlab="Time in months")+ggtitle("TCGA Bladder Cohort")
+           #legend.labs=c("High-Low (76)","Low-Low (108)"),
+           legend.title="Categories",
+           xlab="Time in months")+ggtitle("Whole Bladder Cohort")
 
-dev.off()
+#dev.off()
+ggsave(filename = "km_2class_all2.eps",
+       fallback_resolution = 600,
+       device = cairo_ps)
 
 
 

@@ -150,9 +150,9 @@ if PCA_usage==1
     trainingPredictors=pcaScores(:,:);
 end
 
-%% gaussian kernel or liner kernel
+%% gaussian kernel or linear kernel
 template = templateSVM(...
-    'KernelFunction', 'gaussian', ...
+    'KernelFunction', 'linear', ...
     'PolynomialOrder', [], ...
     'KernelScale', 'auto', ...
     'BoxConstraint', 1, ...
@@ -185,14 +185,16 @@ SSC=SSC+posterior;
 pred=ones(length(Ltest),1);
 pred(SSC(:,2)>SSC(:,1))=3;
 
-pred_bladder=cell(length(pred),2);
+pred_bladder=cell(length(pred),3);
 pred_bladder(:,1)=patID;
 pred_bladder(pred==1,2)={'Low'};
 pred_bladder(pred==3,2)={'High'};
+pred_bladder(pred==1,3)={'Int'};
+pred_bladder(pred==3,3)={'Int'};
 
-FT2=table(pred_bladder(:,1),pred_bladder(:,2));
-FT2.Properties.VariableNames={'patient_names','preds'};
-writetable(FT2,'./pid_tmb_mid_gaussian.xlsx','Sheet',1)
+FT2=table(pred_bladder(:,1),pred_bladder(:,2),pred_bladder(:,3));
+FT2.Properties.VariableNames={'patient_names','preds','gt_labels'};
+writetable(FT2,'./pid_tmb_mid_linear.xlsx','Sheet',1)
 
 
 %save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');

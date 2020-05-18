@@ -1,0 +1,1 @@
+in the pid_pred_gt file, the automatic predictions are obtained by utilizing heatmaps with accuracy: 69.96

@@ -221,8 +221,8 @@ pred_bladder(pred==3,2)={'High'};
 pred_bladder(labels==1,3)={'Low'};
 pred_bladder(labels==3,3)={'High'};
 
-FT2=table(pred_bladder(:,1),pred_bladder(:,2));
-FT2.Properties.VariableNames={'patient_names','preds'};
+FT2=table(pred_bladder(:,1),pred_bladder(:,2),pred_bladder(:,3));
+FT2.Properties.VariableNames={'patient_names','preds','gt_labels'};
 writetable(FT2,'./pid_tmb_pred.xlsx','Sheet',1)
 
 %save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');

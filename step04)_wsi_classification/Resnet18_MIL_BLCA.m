@@ -22,7 +22,7 @@ if resnet18==1
     preds=[];
     for i=1:length(patID(:,1))
         pp_id=patID{i,1};
-        pred_file=dir(fullfile(pred_path,strcat(pp,'*.xlsx')));
+        pred_file=dir(fullfile(pred_path,strcat(pp_id,'*.xlsx')));
         [num,txt,raw] = xlsread(strcat(pred_path,pred_file.name)); 
         preds=[preds,mean(num(:,3))];
         pids=[pids;pp_id]

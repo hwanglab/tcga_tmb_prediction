@@ -1,0 +1,16 @@
+*.pyc
+*.log
+*.npy
+*.npz
+*.ckpt
+*.tar
+*.out
+*.sh
+*.csv
+**/results*/
+
+venv
+.DS_Store
+*.ipynb_checkpoints
+**__pycache__**
+*.ipynb
