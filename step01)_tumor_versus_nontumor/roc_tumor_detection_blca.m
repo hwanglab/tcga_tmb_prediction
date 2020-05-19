@@ -1,4 +1,5 @@
 % plot ROC curve for bladder cancer detection
+addpath(genpath('..\utility_funcs\'))
 
 load('bladder_score_label.mat'); % bladder cancer
 response=testingResponse;

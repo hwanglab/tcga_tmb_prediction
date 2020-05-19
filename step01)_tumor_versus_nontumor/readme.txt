@@ -6,12 +6,12 @@ Output: SVM Tumor Detector
 ------------------------------------------------------------------------------------
 To reprodcuce my results, follow the following steps:
 
-1) main_feats_extraction_from_gt.m (save features for tumor patches)
-2) main_feats_organization_tumor_nontumor.m (organize extracted image features)
+1) a_feats_extraction_gt.m (save features for tumor patches)
+2) b_feats_organization.m (organize extracted image features)
 3) two options you can select:
    a) write the program to train SVM based tumor_classifer
    b) open matlab->apps->classification learner->train SVM classifer using your organized features,e.g., FT in my example 
-      then save the tumor detection clssifer using main_save_exportedmodel
+      then save the tumor detection clssifer using c_save_exportedmodel
       (for simplicity, in my testing I use the option b)
 
 The SVM_cubic_model and SVM_FineGaussian_model are two our trained SVM tumor detection classifier

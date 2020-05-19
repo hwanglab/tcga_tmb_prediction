@@ -1,15 +1,17 @@
-% this function is used bladder cancer tumor detection evaluation
-% reported in the paper
+% this function is used for bladder cancer tumor detection evaluation
 % author: Hongming Xu, Cleveland Clinic, May 2018
 % you may modify or use it, but you need give the credit for original
 % author
+
+% step1: load and organize lbp feaures of image tiles
+% step2: train and test svm for classification
 
 
 function svm_tumor_detection_evaluation
 
 clear vars;
-featureoutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\1)tumor_prediction\tumor\',...
-    'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\1)tumor_prediction\nontumor\'};
+featureoutput={'.\tumor_prediction_features\tumor\',...
+               '.\tumor_prediction_features\nontumor\'};
 
 
 % step 1) feature organization
@@ -113,13 +115,12 @@ for cc=1:ItNum
     % paper
     ACC=sum(testingResponse==foldPrediction)/numel(testingResponse);
     specificity=sum(testingResponse(testingResponse==0)==foldPrediction(testingResponse==0))/(sum(testingResponse==0));
-    sensitivity=sum(testingResponse(testingResponse==1)==foldPrediction(testingResponse==1))/(sum(testingResponse==1))
-    
+    sensitivity=sum(testingResponse(testingResponse==1)==foldPrediction(testingResponse==1))/(sum(testingResponse==1));
     
 end
 
 % save prediction scores for ploting ROC curves
-%save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step1)_tumor_versus_nontumor\','bladder_score_label.mat'),'foldScores','testingResponse');
+%save(strcat('.\','bladder_score_label.mat'),'foldScores','testingResponse');
 
 
 
