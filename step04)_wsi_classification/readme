@@ -1,3 +1,5 @@
-To try our classification testing, you only need to run: SVM_weighted_mean_transfer_learning_2class_V01.m file
+To try our classification testing, you only need to run: SVM_Classification_Low_High_TMB.m file
 
-Other files are our experimental testings during the study, which are not compulsory for reproducing our own results
+Other files are our experimental comparisons.
+
+Note that evluations from this folder are performed based intermediate outputs from other steps
