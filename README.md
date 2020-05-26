@@ -1,11 +1,11 @@
-## tcga_tmb_prediction
+# tcga_tmb_prediction
 Using transfer learning to predict tumor mutational burden from whole slide images for bladder ancer patients
 
 Main author: Hongming Xu, CCF, 2019
 
 Emails: xuh3@ccf.org, or, mxu@ualberta.ca
 
-# Codes:
+## Codes:
 -- Matlab: the majority part of image analysis and classification
 
 -- Python: use pre-trained models to extract tumor tile features
