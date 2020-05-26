@@ -1,6 +1,3 @@
-% this function is used for evaluating bladder TMB prediction in the paper
-% we test it for 2-class classifications: low TMB vs high TMB
-% leave-one-out evaluation is found to be the best
 
 % for this version
 % train the classifer with high and low patients
@@ -12,7 +9,7 @@
 % author
 
 
-function SVM_weighted_mean_transfer_learning_2class_V03
+function SVM_Classification_Mid_TMB
 
 clear vars;
 
@@ -49,8 +46,6 @@ Ftest=[];
 Ltest=[];
 
 load('..\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
-%load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens_Yunku.mat'); % Yunku provided values
-%load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdensII.mat');     % by 5-20 thresholds
 
 patID=[];
 ii=1;
@@ -130,7 +125,6 @@ rng(100); % for the same indice we could generate
 
 
 %1) training the model
-
 trainingPredictors=feats;
 trainingResponse=labels;
 
@@ -179,9 +173,7 @@ testingPredictors=Ftest;
 [foldPrediction,foldScores,pbs,posterior]=validationPredictionFcn(testingPredictors);
 
 
-
 SSC=SSC+posterior;
-
 pred=ones(length(Ltest),1);
 pred(SSC(:,2)>SSC(:,1))=3;
 
@@ -196,10 +188,6 @@ FT2=table(pred_bladder(:,1),pred_bladder(:,2),pred_bladder(:,3));
 FT2.Properties.VariableNames={'patient_names','preds','gt_labels'};
 writetable(FT2,'./pid_tmb_mid_linear.xlsx','Sheet',1)
 
-
-%save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');
-% CC=round(CC);
-% save(strcat('C:\Users\xuh3\Desktop\prostate-project\journal_features\plots\','proposed_confusion_SVM.mat'),'CC');
 
 
 
