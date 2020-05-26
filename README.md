@@ -13,7 +13,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 -- R: to plot KM survival curves
 
 ## Reqirements:
--- pathology slides: you need to get access tcga_blca .svs pathology slides from tcga data portal (freely downloading) OR you can get access them from hwang_lab shared disk (for hwang lab memembers)
+-- pathology slides: you need to get access tcga_blca .svs pathology slides from tcga data portal (freely downloading) OR you can get access them from hwang_lab shared disk (for hwang lab members)
 
 -- matlab toolbox: you need to download matlab openslide toolbox (freely online)
 
