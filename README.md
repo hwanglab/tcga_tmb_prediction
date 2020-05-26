@@ -24,7 +24,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- step01: we trained svm classifier to detect tumor regions. If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
 
--- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering.
+-- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering
 
 -- step03: extract feaures from selected tumor tiles
 
@@ -35,4 +35,11 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 -- step06: generate tmb prediction roc curves
 
 -- step07: generate km curves
+
+## Notes:
+-- utility_funcs：it saves all reqiured matlab functions for this study
+
+-- blca_MutBurdens.mat: it constained tcga_blca patient ID and tmb ground truth labels
+
+-- Table_S1.2017_08_05.xlsx: tcga_blca master table with all patient info.
 
