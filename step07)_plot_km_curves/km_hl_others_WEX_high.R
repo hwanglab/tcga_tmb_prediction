@@ -33,10 +33,10 @@ t1<-tt[1]
 t2<-tt[5]
 
 img<-1
-for (thr in seq(t1,t2,0.05))
-{
-#plabel1<-(pvalue>tt[3])
-plabel1<-(pvalue>thr)
+#for (thr in seq(t1,t2,0.05))
+#{
+plabel1<-(pvalue>tt[3])
+#plabel1<-(pvalue>thr)
 plabel1[plabel1==TRUE]<-'High'
 plabel1[plabel1==FALSE]<-'Low'
 
@@ -54,13 +54,13 @@ pid2<-vector()
 plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
-  if (plabel[kk]=="Low-Low-Low") {
+  if (plabel[kk]=="High-High-Low") {
     pid2[ind]<-pid[kk]
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
-  } else if (plabel[kk]=="Low-High-High" | plabel[kk]=="Low-Low-High" | plabel[kk]=="Low-High-Low"){
+  } else if (plabel[kk]=="High-High-High" | plabel[kk]=="High-Low-High" | plabel[kk]=="High-Low-Low"){
     pid2[ind]<-pid[kk]
-    plabel2[ind]<-'Low others'
+    plabel2[ind]<-'High others'
     ind<-ind+1
   }  else {
     print('impossible~~~')
@@ -124,9 +124,9 @@ p<-ggsurvplot(fit1,pval = TRUE,
            legend.title="Categories",
            xlab="Time in months")+ggtitle("Whole Bladder Cohort")
 
-ggsave(paste('./WEX_low/',toString(img),'.png',sep=""),print(p))
-img<-img+1
-}
+#ggsave(paste('./WEX_low/',toString(img),'.png',sep=""),print(p))
+#img<-img+1
+#}
 
 # ggsurvplot(fit1,
 #            #legend=c(0.8,0.9),
@@ -144,7 +144,7 @@ img<-img+1
 #            ) # Change ggplot2 theme
 
 
-ggsave(filename = "km_4class_all1.eps",
+ggsave(filename = "km_2class_all4.eps",
        fallback_resolution = 600,
        device = cairo_ps)
 

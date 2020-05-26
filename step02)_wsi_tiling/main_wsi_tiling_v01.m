@@ -3,38 +3,43 @@
 % image patches
 % author: Hongming Xu, Ph.D., Cleveland Clinic
 % feel free to use it, but should give original author credits
-% questions: mxu@ualberta.ca
+% email: mxu@ualberta.ca
 % code tested on Win10 system
+% requriment: matlab-openslide toolbox freely available online
 
 close all;clc;
 addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\toolboxes\openslide-matlab-master\'));
-addpath(genpath('Y:\projects\xhm_code_repos\matlab_repository\my_codes\'));
+addpath(genpath('..\utility_funcs\'))
 
-
+% ---- main parameer settings -----%
 magCoarse=2.5;
 magFine=5;
 mag10=20;
-mag20=20;
-ppt=0.8;         % above this threshold is selected as segmented regions
-debug=0;
-LBP_baseline=false; % if false not computing LBP baseline texture features for comparison
-
-thrWhite=210;
-numc=50;
+ppt=0.8;             % above this threshold is selected as segmented regions
+thrWhite=210;        % above this threshold is considered as whilte background pixels
 tileSize=[256,256]./2;
 
-imagePath={'E:\data\blca_mutationBurden\blca_wsi2\'}; % 362 well-quality
-%patients
-%imagePath={'E:\data\blca_mutationBurden\blca_wsi2\','E:\data\blca_mutationBurden\blca_wsi\'}; % 24 not very good quality images
+debug=0;             % if 1: to observer intermediate pictures
+LBP_baseline=false;  % if false not computing LBP baseline texture features for comparison
+% ----- end parameter settings ----%
 
-debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\debug_output\';
+% ----- input-output-path settings ---%
 
-featureOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\1)lbp\'};
-%clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_E_CN\'};
-%apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)P_E_CN\apfreq\';
+% tcga_blca .svs slide data can also be accessed from hwang lab shared
+% space or downloading from tcga data portal
+imagePath={'E:\data\blca_mutationBurden\blca_wsi\'}; % 362 well-quality patients
+%imagePath={'E:\data\blca_mutationBurden\blca_wsi\',
+%           'E:\data\blca_mutationBurden\blca_wsi2\'}; % 24 not very good quality images
 
-clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\norm_test_ap10x\'};
-apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\norm_test_ap10x\apfreq\';
+% only used for saving debuging outputs, you can freely change it to
+% another direcctory
+debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\history_analysis\debug_output\';
+
+% outputs from this function, you can freely change them based on your
+% applications
+clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_CN_20X\'};   % save selected tumor tiles
+apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\P_CN_20X\apfreq\'; % save representative tumor tile name, and the number of
+        % patches in that class
 
 %0) load saved svm tumor detection classifier
 load(strcat('../step01)_tumor_versus_nontumor/','SVM_cubic_model.mat'));
@@ -69,10 +74,10 @@ for ip=1:length(imagePath)
         if debug==1
             xu_debugShownTiles(RGB,bwTissue,top_left,tileSize);
             %saveas(gcf,strcat(debugOutput,imgs(im).name,'.jpg'));
-            %close all;
+            close all;
         end
         
-        %5) feature computation at 5x magnification
+        %5) feature computation at low magnification (5x) for ap clustering
         if any(mag==magFine)
             levelforRead=find(mag==magFine,1);
             feat=xu_textureComputation(top_left,bottom_right,slidePtr,levelforRead,magFine,magCoarse);
@@ -88,57 +93,53 @@ for ip=1:length(imagePath)
         [ylabel,scores]=trainedModel_SVM_cubic.predictFcn(ff);
         
         % 7) feature clustering (AP clustering)
-        %feat_tumor=feat(logical(ylabel),:);   %% default feature selection
+        feat_tumor=feat(logical(ylabel),:);   %% tumore tile lbp features
         
         top_left_tumor=top_left(logical(ylabel),:);
         bottom_right_tumor=bottom_right(logical(ylabel),:);
         
         %% testing recommented by the reviewer -- clustering using features compuated at 10x
-        if any(mag==10) 
-            levelforRead=find(mag==10,1);
-            feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse);
-        else
-            magToUseAbove=min(mag(mag>10));
-            levelforRead=find(mag==magToUseAbove);
-            feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse,magToUseAbove);
-        end
+        % %         if any(mag==10)
+        % %             levelforRead=find(mag==10,1);
+        % %             feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse);
+        % %         else
+        % %             magToUseAbove=min(mag(mag>10));
+        % %             levelforRead=find(mag==magToUseAbove);
+        % %             feat_tumor=xu_textureComputation(top_left_tumor,bottom_right_tumor,slidePtr,levelforRead,10,magCoarse,magToUseAbove);
+        % %         end
         %% end--testing
         
         feat_tumor_cluster=[feat_tumor,(top_left_tumor+bottom_right_tumor)/2];
         
+        %% history tests
+        % %         [idx,indf]=feature_clustering(feat_tumor_cluster,50); % k-means clustering
+        % %         freq=hist(idx,1:length(unique(idx)));
         
-        %[idx,indf]=feature_clustering(feat_tumor_cluster,numc); % k-means clustering
-        %freq=hist(idx,1:length(unique(idx)));
-        
-        [idx,indf]=feature_clustering_AP(feat_tumor_cluster);    % AP clustering
+        [idx,indf]=feature_clustering_AP(feat_tumor_cluster);       % AP clustering
         freq=zeros(1,length(indf));
         for t=1:length(indf)
             freq(t)=sum(idx==indf(t));
         end
         
-        %feat40=feat_tumor(indf,:);
-        
-        % for generating figures shown in the paper
         if debug==1
-            % for generating figures
-            %             mpdc10 = distinguishable_colors(length(indf));
-            %             temp=top_left(logical(ylabel),:);
-            %             figure,imshow(RGB)
-            %             for i=1:size(temp,1)
-            %                 tl=temp(i,:);
-            %                 ind=find(idx(i)==indf);
-            %                 pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
-            %                 hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
-            %                 hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
-            %             end
+            %% for generating figures shown in the paper
+            mpdc10 = distinguishable_colors(length(indf));
+            temp=top_left(logical(ylabel),:);
+            figure,imshow(RGB)
+            for i=1:size(temp,1)
+                tl=temp(i,:);
+                ind=find(idx(i)==indf);
+                pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
+                hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
+                hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
+            end
             
-            %             temp2=temp(indf,:);
-            %
-            %             for t=1:size(temp2,1)
-            %                 tp=temp2(t,:);
-            %                 hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
-            %             end
+            temp2=temp(indf,:);
             
+            for t=1:size(temp2,1)
+                tp=temp2(t,:);
+                hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
+            end
             
             temp=top_left(logical(ylabel),:);
             temp2=temp(indf,:);
@@ -151,14 +152,14 @@ for ip=1:length(imagePath)
             close all;
         end
         
-        
-        
-        % 7) extract features at higher magnification
         top_left_np=top_left_tumor(indf,:);
         bottom_right_np=bottom_right_tumor(indf,:);
         %%top_left_np=top_left_tumor;
         %%bottom_right_np=bottom_right_tumor;
+        
+        % 8) optionall for computing lbp feautres - history tests
         if LBP_baseline==true
+            feat40=feat_tumor(indf,:);
             if any(mag==mag10)
                 levelforRead=find(mag==mag10,1);
                 feat72=xu_textureComputation_II(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse);
@@ -169,29 +170,23 @@ for ip=1:length(imagePath)
             end
             
             feat_out=[feat40,feat72,freq'];
+            featureOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\P_CN_20X\1)lbp\'};
             %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         end
         
-        %saveas(gcf,strcat(debugOutput{ip},imgs(im).name,'.jpg'));
-        %close all;
-        
-        
-        % 8) extract cellular features
+        % 9) save tumor tiles based on ap clustering for subsequent feature extraction 
         if any(mag==mag10)
             levelforRead=find(mag==mag10,1);
-            
             feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE);
-            
         else
             magToUseAbove=min(mag(mag>mag10));
             levelforRead=find(mag==magToUseAbove);
-            
             feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE,magToUseAbove);
-            
         end
         
+        % 10) save representative tumor tile name, and the number of
+        % patches in that class
         save(strcat(apfreqOutput,imgs(im).name,'.mat'),'feat_cell');
-        
         
     end
 end

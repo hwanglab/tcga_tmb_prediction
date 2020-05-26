@@ -125,12 +125,12 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.75,0.85),
-           legend.labs=c("High-Low (85)","Others (283)"),
+           legend.labs=c("High-Low (76)","Others (292)"),
            legend.title="Categories",
            xlab="Time in months")+ggtitle("Whole Bladder Cohort")
 
 #dev.off()
-ggsave(filename = "km_2class_all1.eps",
+ggsave(filename = "km_2class_all3.eps",
        fallback_resolution = 600,
        device = cairo_ps)
 

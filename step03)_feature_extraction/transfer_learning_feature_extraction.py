@@ -1,10 +1,12 @@
 '''
 use pretrained classifiers as feature extractors
-input: patches
-output: feature vector saved into .mat files
-author: Hongming Xu
-ccf, mxu@ualberta.ca
 
+-- input: patches
+-- output: feature vector saved into .mat files
+author: Hongming Xu ccf,
+email: mxu@ualberta.ca
+
+reqirements: keras deep learning toolbox
 '''
 import os
 import numpy as np
@@ -18,31 +20,24 @@ from skimage.io import imshow
 import scipy.io
 import glob
 
+# --- parameter settings ----#
 # dimensions of image patches at 20x
 img_width, img_height = 1024, 1024
-
+# tcga_blca .svs slides
 img_path=['E:/data/blca_mutationBurden/blca_wsi/','E:/data/blca_mutationBurden/blca_wsi2/']
-
-#train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/10)norm_test_20x/'] # original patches
-
-train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/norm_test_ap10x/']
+# selected tumor tiles by main_wsi_tiling_v01.m
+train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_CN_20X/'] # original patches
 
 save_features=True # if True you will save features into .mat files
-
-#train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_E_TD/']
-#feat_output=['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)P_E_TD/3)xception/']
-
-#train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_E_CN/']
-#feat_output=['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)P_E_CN/2)xception/']
-
-
 model_array=['resnet50','nasnet_large','xception','inceptionv3','inceptionresnetv2','densenet','vgg19']
+# --- end parameter settings ----#
+
 def save_bottlebeck_features(model_name):
 
     if model_name=='resnet50':
         model = resnet50.ResNet50(weights='imagenet', include_top=False, pooling='avg')
-        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/2)resnet50/',
-                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/2)resnet50/']
+        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/2)resnet50/',
+                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/2)resnet50/']
 
         # 2048 dimensional features
         # pooling: 1) None: output is 16x16x2048, 2) avg: 1x1x2048, 3) max: 1x1x2048
@@ -53,16 +48,14 @@ def save_bottlebeck_features(model_name):
         #4032 dimensional features
     elif model_name=='xception':
         model=xception.Xception(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False, pooling='avg')
-        #feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/',
-        #               'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/4)xception/']
+        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/4)xception/',
+                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/4)xception/']
 
-        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/norm_test_ap10x/',
-                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/norm_test_ap10x/']
         #2048 dimensional features
     elif model_name=='inceptionv3':
         model=inception_v3.InceptionV3(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False, pooling='avg')
-        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/5)inceptionv3/',
-                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/10)norm_test_20x/5)inceptionv3/']
+        feat_output = ['E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/5)inceptionv3/',
+                       'E:/Hongming/projects/tcga-bladder-mutationburden/feature_output/P_CN_20X/5)inceptionv3/']
         #2048 dimensional features
     elif model_name=='inceptionresnetv2':
         model=inception_resnet_v2.InceptionResNetV2(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False, pooling='avg')
@@ -81,7 +74,6 @@ def save_bottlebeck_features(model_name):
 
     print(model.summary())
 
-    #img_train_ids=get_train_img_id()
     for ind in range(1, len(img_path)):
         path_ind = img_path[ind]
         #path_split=path_ind.split("/")
@@ -123,7 +115,6 @@ def save_bottlebeck_features(model_name):
 
                     # extract the features
                     features = model.predict(x)[0]
-
                     #features=np.mean(features,axis=(0,1))
 
                     image_features.append(features)
