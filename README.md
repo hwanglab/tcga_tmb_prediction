@@ -1,5 +1,5 @@
 # tcga_tmb_prediction
-Using transfer learning to predict tumor mutational burden from whole slide images for bladder ancer patients
+Using transfer learning to predict tumor mutational burden from whole slide images for bladder cancer patients
 
 Main author: Hongming Xu, CCF, 2019
 
