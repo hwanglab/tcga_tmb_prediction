@@ -3,7 +3,7 @@ Using transfer learning to predict tumor mutational burden from whole slide imag
 
 Main author: Hongming Xu, CCF, 2019
 
-Emails: xuh3@ccf.org, or, mxu@ualberta.ca
+Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 ## Codes:
 -- Matlab: the majority part of image analysis and classification
