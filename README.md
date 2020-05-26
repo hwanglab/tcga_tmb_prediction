@@ -12,6 +12,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- R: to plot KM survival curves
 
-if you want to reproduce our studies, please follows step1)-step4)
+## Usages:
+-- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
-if you want to reproduce the figures we generated, please see step5) and step6)
+-- step01: we trained svm classifier to detect tumor regions
