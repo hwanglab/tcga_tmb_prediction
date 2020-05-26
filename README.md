@@ -22,4 +22,17 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 ## Usages:
 -- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
--- step01: we trained svm classifier to detect tumor regions
+-- step01: we trained svm classifier to detect tumor regions. If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
+
+-- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering.
+
+-- step03: extract feaures from selected tumor tiles
+
+-- step04: tmb prediction classifications
+
+-- step05: generate heatmaps and compute entropy
+
+-- step06: generate tmb prediction roc curves
+
+-- step07: generate km curves
+
