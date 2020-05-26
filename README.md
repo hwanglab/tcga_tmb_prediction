@@ -1,10 +1,45 @@
 # tcga_tmb_prediction
-Using transfer learning to predict tumor mutational burden from whole slide images for bladder and lung cancer patients
+Using transfer learning to predict tumor mutational burden from whole slide images for bladder cancer patients
 
 Main author: Hongming Xu, CCF, 2019
 
-For contacts: xuh3@ccf.org, or, mxu@ualberta.ca
+Emails: xuh3@ccf.org or mxu@ualberta.ca
 
-if you want to reproduce our studies, please follows step1)-step4)
+## Codes:
+-- Matlab: the majority part of image analysis and classification
 
-if you want to reproduce the figures we generated, please see step5) and step6)
+-- Python: use pre-trained models to extract tumor tile features
+
+-- R: to plot KM survival curves
+
+## Reqirements:
+-- pathology slides: you need to get access tcga_blca .svs pathology slides from tcga data portal (freely downloading) OR you can get access them from hwang_lab shared disk (for hwang lab members)
+
+-- matlab toolbox: you need to download matlab openslide toolbox (freely online)
+
+-- python toolbox: you need to install tensorflow+keras (freely online)
+
+## Usages:
+-- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
+
+-- step01: we trained svm classifier to detect tumor regions. If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
+
+-- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering
+
+-- step03: extract feaures from selected tumor tiles
+
+-- step04: tmb prediction classifications
+
+-- step05: generate heatmaps and compute entropy
+
+-- step06: generate tmb prediction roc curves
+
+-- step07: generate km curves
+
+## Notes:
+-- utility_funcs：it saves all reqiured matlab functions for this study
+
+-- blca_MutBurdens.mat: it constained tcga_blca patient ID and tmb ground truth labels
+
+-- Table_S1.2017_08_05.xlsx: tcga_blca master table with all patient info.
+
