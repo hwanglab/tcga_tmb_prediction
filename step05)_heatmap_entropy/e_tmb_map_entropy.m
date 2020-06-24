@@ -18,6 +18,7 @@ else
 end
 
 feat_path='..\step07)_plot_km_curves\features\';
+graymap_path='.\heatmap_blca\gray_maps\';
 
 mat_files=dir(strcat(tmb_path,'*.mat'));
 
@@ -35,6 +36,10 @@ for i=1:length(mat_files)
         %unique(tmb_map(rs:re,cs:ce))
         tmb_level=[tmb_level,mean(mean(tmb_map(rs:re,cs:ce)))];
     end
+    
+    % save gray-scale heatmap
+   % temp=strsplit(temp_file,'.');
+   % imwrite(tmb_map,strcat(graymap_path,temp{1},'.png'));
     
     sh_entropy=shannon_entropy(tmb_level);
     %save(strcat(feat_path,temp_file),'sh_entropy');

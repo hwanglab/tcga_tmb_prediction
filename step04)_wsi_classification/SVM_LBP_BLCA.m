@@ -1,21 +1,19 @@
 % tcga_blca tmb prediction LBP+SVM baseline comparison
 % author: Hongming Xu, CCF, 2019
-% questions: mxu@ualberta.ca
+% email: mxu@ualberta.ca
 
 
 function SVM_LBP_BLCA
 
 clear vars;
 
-featPath={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\10)norm_test_20x\1)lbp\'};
+featPath={'E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\P_CN_20X\1)lbp\'};
 
 
 Ftrain=[];
 Ltrain=[];
 
 load('../blca_MutBurdens.mat');  % TCGA TMB values
-%load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdens_Yunku.mat'); % Yunku provided values
-%load('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\blca_MutBurdensII.mat');     % TCGA use the second division criterion
 
 % step 1) feature organization
 patID=[];
@@ -76,10 +74,10 @@ FT.Properties.VariableNames={'features','classes'};
 labels=Ltrain;
 feats=Ftrain;
 
-KFolds=10;
+%KFolds=10;
 ACC=[];           % save the final acc
 CC=zeros(2,2);    % save the confusion matrix
-ItNum=1;         % number of iterations for cross validations
+ItNum=1;          % number of iterations for cross validations
 ComNum=40;        % number of PCA components
 PCA_usage=1;      % whether use PCA
 
@@ -138,8 +136,7 @@ for cc=1:ItNum
             svmPredictFcn=@(x)predict(classificationSVM,x);
             validationPredictionFcn=@(x)svmPredictFcn(x);
         end
-        
-        
+         
         testingPredictors=feats(OriTest,:);
         testingResponse=labels(OriTest);
         [foldPrediction,foldScores]=validationPredictionFcn(testingPredictors);

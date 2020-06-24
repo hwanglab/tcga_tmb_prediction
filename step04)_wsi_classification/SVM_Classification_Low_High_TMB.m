@@ -15,7 +15,7 @@ clear vars;
 %% --- these are the indictors which testing we are performing---%
 %  --- for more detail experiments see the paper description ---%
 techs={'P_E_TD','P_E_CN','P_InceptionV3','P_Resnet50','P_Xception'};
-meth=techs{5}; % 1,2,3,4,5 corresponding different testings
+meth=techs{4}; % 1,2,3,4,5 corresponding different testings
 
 % features of tumor tiles output by pretrained deep learning models
 switch meth
@@ -156,7 +156,7 @@ for cc=1:ItNum
         end
         
         template = templateSVM(...
-            'KernelFunction', 'gaussian', ...
+            'KernelFunction', 'linear', ...
             'PolynomialOrder', [], ...
             'KernelScale', 'auto', ...
             'BoxConstraint', 1, ...
@@ -212,6 +212,8 @@ senm=mean(SEN);
 pred=ones(length(labels),1);
 pred(SSC(:,2)>SSC(:,1))=3;
 
+save(strcat('..\step06)_plot_figures\tcga_blca_proposed\','p_resnet50_linear.mat'),'labels','SSC');
+
 pred_bladder=cell(length(pred),3);
 pred_bladder(:,1)=patID;
 pred_bladder(pred==1,2)={'Low'};
@@ -221,9 +223,8 @@ pred_bladder(labels==3,3)={'High'};
 
 FT2=table(pred_bladder(:,1),pred_bladder(:,2),pred_bladder(:,3));
 FT2.Properties.VariableNames={'patient_names','preds','gt_labels'};
-writetable(FT2,'./pid_tmb_pred.xlsx','Sheet',1)
+%writetable(FT2,'./pid_tmb_pred.xlsx','Sheet',1)
 
-%save(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\step7)_plot_figures\','score_label2.mat'),'labels','SSC');
 
 
 

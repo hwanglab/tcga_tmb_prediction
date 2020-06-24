@@ -1,0 +1,18 @@
+TCGA_BLCA TILs+TMB+Tumor Overlapped Maps
+
+Red channel: tils pixels
+Green channel: TMB-High pixels
+Blue channel: Tumor Pixels
+
+Note that in the image diffrent colors are:
+ 
+tils & tmb-high pxiels, yellow color
+tmb-high & tumor pixels: cyan color
+tils & tumor pixels: pink color
+
+tils &tmb-h & tumor pixels: white color
+
+Each patient has two images:
+probability map: stores predictions 
+
+binary map: stores binarization by threshold 0.5
