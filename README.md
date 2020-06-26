@@ -1,5 +1,5 @@
 # tcga_tmb_prediction
-Using transfer learning to predict tumor mutational burden from whole slide images for bladder cancer patients
+Deep learning approach to predict tumor mutation burden (TMB) and delineate its spatial heterogeneity from whole slide images.
 
 Main author: Hongming Xu, CCF, 2019
 
