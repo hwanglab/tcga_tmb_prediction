@@ -1,5 +1,9 @@
 #This folder contains the program and intermediate results to build tumor_classifier
 
+# in our evaluations, we trained two tumor detectors:
+(1) The first is LBP+SVM for tumor detection (see below explanations about our experiments)
+(2) The designed CNN for tumor detection
+
 ------------------------------------------------------------------------------------
 Input: given annotated tumor and on-tumor regions in the WSIs, this step builds a tumor detector using only LBP texture features with SVM classifier
 Output: SVM Tumor Detector
