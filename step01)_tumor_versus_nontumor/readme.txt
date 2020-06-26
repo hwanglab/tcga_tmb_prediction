@@ -2,7 +2,7 @@
 
 # in our evaluations, we trained two tumor detectors:
 (1) The first is LBP+SVM for tumor detection (see below explanations about our experiments)
-(2) The designed CNN for tumor detection
+(2) The designed CNN for tumor detection (see the folder tcga_blca_tumor_detector)
 
 ------------------------------------------------------------------------------------
 Input: given annotated tumor and on-tumor regions in the WSIs, this step builds a tumor detector using only LBP texture features with SVM classifier
