@@ -1,5 +1,5 @@
 # tcga_tmb_prediction
-Using transfer learning to predict tumor mutational burden from whole slide images for bladder cancer patients
+Deep learning approach to predict tumor mutation burden (TMB) and delineate its spatial heterogeneity from whole slide images.
 
 Main author: Hongming Xu, CCF, 2019
 
@@ -22,7 +22,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 ## Usages:
 -- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
--- step01: we trained svm classifier to detect tumor regions. If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
+-- step01: for simplicity, we trained svm classifier to detect tumor regions (which is used in the example). If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
 
 -- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering
 
