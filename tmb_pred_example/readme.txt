@@ -3,7 +3,6 @@ First please go to website: https://portal.gdc.cancer.gov/repository?filters=%7B
 download the example pathlogy slide: TCGA-BL-A3JM-01Z-00-DX1.33E53972-CEA4-4D84-A5D2-7DAD7B0C27F8.svs
 we cannot upload any slide in github due to size limiatation.
 
-Second, unzip the openslide-matlab-master file here.
 
 This is a simple tmb_prediction example for a small whole slide image.
 
