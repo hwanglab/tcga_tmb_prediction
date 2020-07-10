@@ -20,7 +20,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 -- python toolbox: you need to install tensorflow+keras (freely online)
 
 ## Usages:
--- You can get the basic ideas for our study by running example
+-- You can get the basic ideas for our study by running codes in tmb_pred_example folder
 
 -- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
