@@ -20,6 +20,8 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 -- python toolbox: you need to install tensorflow+keras (freely online)
 
 ## Usages:
+-- You can get the basic ideas for our study by running example
+
 -- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
 -- step01: for simplicity, we trained svm classifier to detect tumor regions (which is used in the example). If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
