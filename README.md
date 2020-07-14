@@ -21,7 +21,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 ## Simple Example:
 
--- You can get the basic ideas for our study by running codes in: tmb_pred_example folder
+-- You can get the basic ideas for our study by running codes in: example_tmb_prediction folder
 
 ## Other Usages:
 
