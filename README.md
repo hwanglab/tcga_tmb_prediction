@@ -23,11 +23,11 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- You can get the basic ideas for our study by running codes in: example_tmb_prediction folder
 
-## Other Usages:
+## Explanations of different folders:
 
--- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
+-- step00: contains the code to divide patients into low, mid and high TMB groups. It is used as the preprocessing, you do not need to run this folder for repeating our studies
 
--- step01: for simplicity, we trained svm classifier to detect tumor regions (which is used in the example). If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
+-- step01: for simplicity, we trained a svm classifier to detect tumor regions (which is used in the example). You can skip this folder to run other steps too. (deep learning based tumor detector codes are also included inside this folder)
 
 -- step02: input the .svs whole slides images, we detect and save selected tumor tiles by ap clustering
 
@@ -44,7 +44,4 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 ## Notes:
 -- utility_funcs：it saves all reqiured matlab functions for this study
 
--- blca_MutBurdens.mat: it constained tcga_blca patient ID and tmb ground truth labels
-
--- Table_S1.2017_08_05.xlsx: tcga_blca master table with all patient info.
 
