@@ -1,3 +1,8 @@
+%% -----readme------
+% purpose: after downloading .svs slides from tcga
+% we used below code to copy only slides to another folder 
+
+
 % read and process excel spreadsheet file
 sheet=2;
 [~,~,raw_patientID]=xlsread('Table_S1.2017_08_05.xlsx',sheet,'A1:A413');

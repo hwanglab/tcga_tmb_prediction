@@ -4,7 +4,7 @@
 % [~,~,raw_KMT2D]=xlsread('Table_S1.2017_08_05.xlsx',sheet,'BK1:BK413');
 % [~,~,raw_KMT2C]=xlsread('Table_S1.2017_08_05.xlsx',sheet,'CB1:CB413');
 
-load(strcat('E:\Hongming\projects\tcga-bladder-mutationburden\Hongming_codes\','blca_MutBurdens.mat'));
+load(strcat('.\','blca_MutBurdens.mat'));
 
 
 %Datasetpath={'E:\blca_mutationBurden\low\','E:\blca_mutationBurden\mid\','E:\blca_mutationBurden\high\'};
