@@ -19,7 +19,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- python toolbox: you need to install tensorflow+keras (freely online)
 
-## Simple Example
+## Simple Example:
 
 -- You can get the basic ideas for our study by running codes in: tmb_pred_example folder
 
