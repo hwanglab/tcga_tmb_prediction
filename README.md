@@ -10,7 +10,7 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- Python: use pre-trained models to extract tumor tile features
 
--- R: to plot KM survival curves
+-- R: plot KM survival curves
 
 ## Reqirements:
 -- pathology slides: you need to get access tcga_blca .svs pathology slides from tcga data portal (freely downloading) OR you can get access them from hwang_lab shared disk (for hwang lab members)
@@ -19,7 +19,12 @@ Emails: xuh3@ccf.org or mxu@ualberta.ca
 
 -- python toolbox: you need to install tensorflow+keras (freely online)
 
-## Usages:
+## Simple Example:
+
+-- You can get the basic ideas for our study by running codes in: tmb_pred_example folder
+
+## Other Usages:
+
 -- step00: pre-processing during our project develompent, you do not need to run this folder for repeating our studies
 
 -- step01: for simplicity, we trained svm classifier to detect tumor regions (which is used in the example). If you want to check how we trained svm tumor detectors, you could start from this folder. Otherwise you can skip this folder.
