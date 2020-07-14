@@ -49,7 +49,7 @@ for ip=1:length(imagePath)
     imgPath=imagePath{ip};
     imgs=dir(fullfile(imgPath,'*.svs'));
     
-    for im=1:numel(imgs)
+    for im=291:numel(imgs)
         file1=fullfile(imgPath,imgs(im).name);
         fprintf('filename=%s\n%d',file1,im);
         slidePtr=openslide_open(file1);

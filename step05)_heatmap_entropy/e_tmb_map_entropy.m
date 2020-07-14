@@ -59,8 +59,8 @@ else
     disp('undefined selection!!!!!!!')
 end
 
-% X = [1 2 2 0];
-% h2=shannon_entropy(X);
+ %X = [0.5 0.5 0.5 0.5 0.5];
+ %h2=shannon_entropy(X);
 
 function H=shannon_entropy(X)
 % shannon's entropy

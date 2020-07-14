@@ -15,7 +15,7 @@ clear vars;
 %% --- these are the indictors which testing we are performing---%
 %  --- for more detail experiments see the paper description ---%
 techs={'P_E_TD','P_E_CN','P_InceptionV3','P_Resnet50','P_Xception'};
-meth=techs{4}; % 1,2,3,4,5 corresponding different testings
+meth=techs{5}; % 1,2,3,4,5 corresponding different testings
 
 % features of tumor tiles output by pretrained deep learning models
 switch meth

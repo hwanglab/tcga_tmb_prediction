@@ -35,31 +35,36 @@
 addpath(addpath(genpath('..\utility_funcs\')))
 matpath='./tcga_blca_baselines/';  
 
-%1) proposed tmb prediction
-load(strcat('./','p_xception.mat')); 
+%1) proposed tmb prediction using svm with rbf kernel
+load(strcat('./tcga_blca_proposed/','p_xception.mat')); 
 response=labels;
 p_xception=SSC;
 
-%2) lbp baseline comparison
+%2) load p_xception with linear svm
+load(strcat('./tcga_blca_proposed/','p_xception_linear.mat')); 
+response_linear=labels;
+p_xception_linear=SSC;
+
+%3) lbp baseline comparison
 load(strcat(matpath,'lbp.mat')); % bladder cancer tmb lbp
 response_lbp=labels;
 p_lbp=SSC;
 
-%3) svgg16 baseline comparison
+%4) svgg16 baseline comparison
 load(strcat(matpath,'vggresult.mat'))
 p_vgg=1-preds;
 
-%4) vgg16-tl baseline comparison
+%5) vgg16-tl baseline comparison
 load(strcat(matpath,'vgg16_tl_roc.mat'))
 response_vgg16_tl=labels;
 p_vggtl=1-preds;
 
-%5) mil baseline comparison
+%6) mil baseline comparison
 load(strcat(matpath,'mil.mat'))
 response_mil=labels_mil;
 p_mil=preds_mil;
 
-%6) resnet18 baseline comparison
+%7) resnet18 baseline comparison
 load(strcat(matpath,'resnet18.mat'))
 response_resnet18=label;
 p_resnet18=preds;
@@ -69,24 +74,24 @@ p_resnet18=preds;
 [x2_g,y2_g,t2_g,auc2_g]=perfcurve(response_vgg16_tl,p_vggtl,'3','NBoot',1000,'Alpha',0.05);
 [x3_g,y3_g,t3_g,auc3_g]=perfcurve(response_mil,p_mil,'3','NBoot',1000,'Alpha',0.05);
 [x4_g,y4_g,t4_g,auc4_g]=perfcurve(response_resnet18,p_resnet18,'3','NBoot',1000,'Alpha',0.05);
-
-[x5_g,y5_g,t5_g,auc5_g]=perfcurve(response,p_xception(:,2),'3','NBoot',1000,'Alpha',0.05);
+[x5_g,y5_g,t5_g,auc5_g]=perfcurve(response_linear,p_xception_linear(:,2),'3','NBoot',1000,'Alpha',0.05);
+[x6_g,y6_g,t6_g,auc6_g]=perfcurve(response,p_xception(:,2),'3','NBoot',1000,'Alpha',0.05);
 
 
 figure,
 hold on,h1=line_fewer_markers(x0_g(:,1),y0_g(:,1),7,'p','Color',[0 0.0 0.8],'Spacing', 'curve','markersize',6,'LineWidth',1);
 hold on,h2=line_fewer_markers(x1_g(:,1),y1_g(:,1),7,'d','Color',[0.8 0.0 0],'Spacing', 'curve','markersize',6,'LineWidth',1);
 hold on,h3=line_fewer_markers(x2_g(:,1),y2_g(:,1),7,'o','Color',[0.0 0.8 0],'Spacing', 'curve','markersize',6,'LineWidth',1);
-hold on,h4=line_fewer_markers(x3_g(:,1),y3_g(:,1),7,'o','Color',[0 0.4470 0.7410],'Spacing', 'curve','markersize',6,'LineWidth',1);
+hold on,h4=line_fewer_markers(x3_g(:,1),y3_g(:,1),7,'o','Color',[0 0.447 0.741],'Spacing', 'curve','markersize',6,'LineWidth',1);
 hold on,h5=line_fewer_markers(x4_g(:,1),y4_g(:,1),7,'*','Color',[0.8 0.5 0],'Spacing', 'curve','markersize',6,'LineWidth',1);
-
-hold on,h6=line_fewer_markers(x5_g(:,1),y5_g(:,1),7,'ks','Spacing', 'curve','markersize',6,'LineWidth',1);
+hold on,h6=line_fewer_markers(x5_g(:,1),y5_g(:,1),7,'+','Color',[1.0 0.08 0.57],'Spacing', 'curve','markersize',6,'LineWidth',1);
+hold on,h7=line_fewer_markers(x6_g(:,1),y6_g(:,1),7,'ks','Spacing', 'curve','markersize',6,'LineWidth',1);
 
 x=0:0.05:1;
 y=0:0.05:1;
-hold on,h7=plot(x,y,'k--');
+hold on,h8=plot(x,y,'k--');
 %legend([h2,h3,h4],{'VGG16-DL (AUC=0.651)','VGG16-TL (AUC=0.707)','Proposed (AUC=0.752)'});
-legend([h1,h2,h3,h4,h5,h6],{'LBP+SVM (AUC=0.623)','Designed CNN (AUC=0.651)','VGG16-TL2 (AUC=0.707)','MIL (AUC=0.647)','Resnet18 (AUC=0.701)','Proposed (AUC=0.752)'});
+legend([h1,h2,h3,h4,h5,h6,h7],{'LBP+SVM (AUC=0.623)','Designed CNN (AUC=0.651)','VGG16-TL2 (AUC=0.707)','MIL (AUC=0.647)','Resnet18 (AUC=0.701)','Proposed-LIN (AUC=0.748)', 'Proposed-RBF (AUC=0.752)'});
 xlabel('1-specificity'); 
 ylabel('sensitivity');
 ylim([0 1.0])

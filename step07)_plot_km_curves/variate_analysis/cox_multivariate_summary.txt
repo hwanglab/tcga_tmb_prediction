@@ -1,0 +1,174 @@
+Call:
+coxph(formula = Surv(Combined.days.to.last.followup.or.death, 
+    Vital.status) ~ Age.at.diagnosis + AJCC.pathologic.tumor.stage + 
+    Inflammatory.Infiltrate.Response + Lymphovascular.invasion + 
+    RPPA.cluster + mRNA.cluster + fb, data = my_data_sub)
+
+  n= 203, number of events= 92 
+   (207 observations deleted due to missingness)
+
+                                                                                                 coef  exp(coef)   se(coef)
+Age.at.diagnosis                                                                            5.559e-02  1.057e+00  1.362e-02
+AJCC.pathologic.tumor.stageIII                                                             -1.114e-01  8.946e-01  3.877e-01
+AJCC.pathologic.tumor.stageIV                                                               7.891e-01  2.201e+00  3.779e-01
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor)  3.701e+00  4.051e+01  1.106e+00
+Inflammatory.Infiltrate.ResponseLymphocytes                                                 7.507e-02  1.078e+00  3.130e-01
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                              NA         NA  0.000e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                     1.197e+00  3.311e+00  4.845e-01
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                         2.918e-01  1.339e+00  2.944e-01
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                        -2.731e-01  7.610e-01  1.102e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                     5.995e-01  1.821e+00  1.098e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                        -1.371e+01  1.107e-06  5.385e+03
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                            NA         NA  0.000e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                        -1.685e+01  4.806e-08  5.113e+03
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                         -1.753e+01  2.444e-08  5.385e+03
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                 6.931e-01  2.000e+00  6.669e-01
+Lymphovascular.invasionYES                                                                  1.160e+00  3.190e+00  2.937e-01
+RPPA.cluster2                                                                               1.051e-02  1.011e+00  4.242e-01
+RPPA.cluster3                                                                              -6.722e-01  5.106e-01  4.719e-01
+RPPA.cluster4                                                                              -5.581e-01  5.723e-01  4.901e-01
+RPPA.cluster5                                                                              -4.638e-01  6.289e-01  4.479e-01
+mRNA.clusterLuminal                                                                        -7.028e-01  4.952e-01  5.808e-01
+mRNA.clusterLuminal_infiltrated                                                            -6.124e-01  5.420e-01  3.349e-01
+mRNA.clusterLuminal_papillary                                                              -8.931e-01  4.094e-01  3.767e-01
+mRNA.clusterNeuronal                                                                       -6.925e-02  9.331e-01  4.775e-01
+fb2                                                                                         9.723e-01  2.644e+00  2.990e-01
+                                                                                                z Pr(>|z|)    
+Age.at.diagnosis                                                                            4.082 4.46e-05 ***
+AJCC.pathologic.tumor.stageIII                                                             -0.287 0.773806    
+AJCC.pathologic.tumor.stageIV                                                               2.088 0.036782 *  
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor)  3.347 0.000818 ***
+Inflammatory.Infiltrate.ResponseLymphocytes                                                 0.240 0.810479    
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                          NA       NA    
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                     2.471 0.013470 *  
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                         0.991 0.321484    
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                        -0.248 0.804250    
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                     0.546 0.584950    
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                        -0.003 0.997968    
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                        NA       NA    
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                        -0.003 0.997371    
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                         -0.003 0.997403    
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                 1.039 0.298699    
+Lymphovascular.invasionYES                                                                  3.950 7.81e-05 ***
+RPPA.cluster2                                                                               0.025 0.980240    
+RPPA.cluster3                                                                              -1.424 0.154317    
+RPPA.cluster4                                                                              -1.139 0.254797    
+RPPA.cluster5                                                                              -1.036 0.300411    
+mRNA.clusterLuminal                                                                        -1.210 0.226247    
+mRNA.clusterLuminal_infiltrated                                                            -1.829 0.067469 .  
+mRNA.clusterLuminal_papillary                                                              -2.371 0.017751 *  
+mRNA.clusterNeuronal                                                                       -0.145 0.884703    
+fb2                                                                                         3.252 0.001144 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                                                                           exp(coef) exp(-coef) lower .95
+Age.at.diagnosis                                                                           1.057e+00  9.459e-01   1.02932
+AJCC.pathologic.tumor.stageIII                                                             8.946e-01  1.118e+00   0.41840
+AJCC.pathologic.tumor.stageIV                                                              2.201e+00  4.542e-01   1.04964
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor) 4.051e+01  2.469e-02   4.63543
+Inflammatory.Infiltrate.ResponseLymphocytes                                                1.078e+00  9.277e-01   0.58363
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                             NA         NA        NA
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                    3.311e+00  3.020e-01   1.28102
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                        1.339e+00  7.469e-01   0.75193
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                        7.610e-01  1.314e+00   0.08776
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                    1.821e+00  5.491e-01   0.21186
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                        1.107e-06  9.034e+05   0.00000
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                           NA         NA        NA
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                        4.806e-08  2.081e+07   0.00000
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                         2.444e-08  4.091e+07   0.00000
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                2.000e+00  5.000e-01   0.54116
+Lymphovascular.invasionYES                                                                 3.190e+00  3.135e-01   1.79395
+RPPA.cluster2                                                                              1.011e+00  9.895e-01   0.44003
+RPPA.cluster3                                                                              5.106e-01  1.959e+00   0.20246
+RPPA.cluster4                                                                              5.723e-01  1.747e+00   0.21900
+RPPA.cluster5                                                                              6.289e-01  1.590e+00   0.26140
+mRNA.clusterLuminal                                                                        4.952e-01  2.019e+00   0.15864
+mRNA.clusterLuminal_infiltrated                                                            5.420e-01  1.845e+00   0.28114
+mRNA.clusterLuminal_papillary                                                              4.094e-01  2.443e+00   0.19566
+mRNA.clusterNeuronal                                                                       9.331e-01  1.072e+00   0.36597
+fb2                                                                                        2.644e+00  3.782e-01   1.47166
+                                                                                           upper .95
+Age.at.diagnosis                                                                              1.0858
+AJCC.pathologic.tumor.stageIII                                                                1.9126
+AJCC.pathologic.tumor.stageIV                                                                 4.6171
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor)  353.9448
+Inflammatory.Infiltrate.ResponseLymphocytes                                                   1.9910
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                             NA
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                       8.5588
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                           2.3840
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                           6.5986
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                      15.6558
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                              Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                           NA
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                              Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                               Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                   7.3901
+Lymphovascular.invasionYES                                                                    5.6720
+RPPA.cluster2                                                                                 2.3208
+RPPA.cluster3                                                                                 1.2875
+RPPA.cluster4                                                                                 1.4955
+RPPA.cluster5                                                                                 1.5129
+mRNA.clusterLuminal                                                                           1.5458
+mRNA.clusterLuminal_infiltrated                                                               1.0450
+mRNA.clusterLuminal_papillary                                                                 0.8566
+mRNA.clusterNeuronal                                                                          2.3791
+fb2                                                                                           4.7507
+
+Concordance= 0.755  (se = 0.025 )
+Likelihood ratio test= 77.31  on 23 df,   p=9e-08
+Wald test            = 65.42  on 23 df,   p=6e-06
+Score (logrank) test = 79.72  on 23 df,   p=4e-08
+
+                                                                                                   2.5 %        97.5 %
+Age.at.diagnosis                                                                            2.889882e-02  8.227437e-02
+AJCC.pathologic.tumor.stageIII                                                             -8.713126e-01  6.484599e-01
+AJCC.pathologic.tumor.stageIV                                                               4.844890e-02  1.529777e+00
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor)  1.533729e+00  5.869141e+00
+Inflammatory.Infiltrate.ResponseLymphocytes                                                -5.384926e-01  6.886358e-01
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                                 NA            NA
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                     2.476570e-01  2.146958e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                        -2.851121e-01  8.687949e-01
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                        -2.433154e+00  1.886859e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                    -1.551845e+00  2.750843e+00
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                        -1.056870e+04  1.054127e+04
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                               NA            NA
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                        -1.003846e+04  1.000476e+04
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                         -1.057252e+04  1.053746e+04
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                -6.140316e-01  2.000135e+00
+Lymphovascular.invasionYES                                                                  5.844212e-01  1.735550e+00
+RPPA.cluster2                                                                              -8.209031e-01  8.419159e-01
+RPPA.cluster3                                                                              -1.597200e+00  2.527253e-01
+RPPA.cluster4                                                                              -1.518701e+00  4.024678e-01
+RPPA.cluster5                                                                              -1.341702e+00  4.140476e-01
+mRNA.clusterLuminal                                                                        -1.841149e+00  4.355271e-01
+mRNA.clusterLuminal_infiltrated                                                            -1.268914e+00  4.402019e-02
+mRNA.clusterLuminal_papillary                                                              -1.631384e+00 -1.547486e-01
+mRNA.clusterNeuronal                                                                       -1.005215e+00  8.667178e-01
+fb2                                                                                         3.863913e-01  1.558292e+00
+                                                                                                2.5 %      97.5 %
+Age.at.diagnosis                                                                           1.02932044   1.0857537
+AJCC.pathologic.tumor.stageIII                                                             0.41840200   1.9125930
+AJCC.pathologic.tumor.stageIV                                                              1.04964173   4.6171449
+Inflammatory.Infiltrate.ResponseAbsent(separateclustersofLymphocytes,notinfiltratingtumor) 4.63543157 353.9447910
+Inflammatory.Infiltrate.ResponseLymphocytes                                                0.58362732   1.9909975
+Inflammatory.Infiltrate.ResponseLymphocytes(clusters)                                              NA          NA
+Inflammatory.Infiltrate.ResponseLymphocytes,eosinophils                                    1.28102051   8.5587796
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal                                        0.75192999   2.3840362
+Inflammatory.Infiltrate.ResponseLymphocytes,minimal,rareeosinophils                        0.08775959   6.5986105
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils                                    0.21185667  15.6558187
+Inflammatory.Infiltrate.ResponseLymphocytes,neutrophils,plasmacells                        0.00000000         Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells                                            NA          NA
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinophils                        0.00000000         Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,plasmacells,eosinopils                         0.00000000         Inf
+Inflammatory.Infiltrate.ResponseLymphocytes,rareeosinophils                                0.54116470   7.3900511
+Lymphovascular.invasionYES                                                                 1.79395239   5.6720456
+RPPA.cluster2                                                                              0.44003408   2.3208091
+RPPA.cluster3                                                                              0.20246252   1.2875295
+RPPA.cluster4                                                                              0.21899614   1.4955108
+RPPA.cluster5                                                                              0.26140033   1.5129292
+mRNA.clusterLuminal                                                                        0.15863509   1.5457777
+mRNA.clusterLuminal_infiltrated                                                            0.28113681   1.0450035
+mRNA.clusterLuminal_papillary                                                              0.19565855   0.8566305
+mRNA.clusterNeuronal                                                                       0.36596590   2.3790893
+fb2                                                                                        1.47166042   4.7507002
