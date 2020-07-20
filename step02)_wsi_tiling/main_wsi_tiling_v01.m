@@ -21,6 +21,7 @@ tileSize=[256,256]./2;
 
 debug=0;             % if 1: to observer intermediate pictures
 LBP_baseline=false;  % if false not computing LBP baseline texture features for comparison
+without_ap=true;
 % ----- end parameter settings ----%
 
 % ----- input-output-path settings ---%
@@ -37,19 +38,23 @@ debugOutput='E:\Hongming\projects\tcga-bladder-mutationburden\history_analysis\d
 
 % outputs from this function, you can freely change them based on your
 % applications
-clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_CN_20X\'};   % save selected tumor tiles
-apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\P_CN_20X\apfreq\'; % save representative tumor tile name, and the number of
-        % patches in that class
+%clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\tiles_output\P_CN_20X\'};   % save selected tumor tiles
+%apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\feature_output\P_CN_20X\apfreq\'; % save representative tumor tile name, and the number of
+% patches in that class
 
+clusterImgOutput={'E:\Hongming\projects\tcga-bladder-mutationburden\excel_process\speed_test\proposed\'};
+apfreqOutput='E:\Hongming\projects\tcga-bladder-mutationburden\excel_process\speed_test\proposed\';
+
+tic
 %0) load saved svm tumor detection classifier
-load(strcat('../step01)_tumor_versus_nontumor/','SVM_cubic_model.mat'));
+load(strcat('../step01)_tumor_vs_nontumor/','SVM_cubic_model.mat'));
 
 for ip=1:length(imagePath)
     
     imgPath=imagePath{ip};
     imgs=dir(fullfile(imgPath,'*.svs'));
     
-    for im=291:numel(imgs)
+    for im=1:numel(imgs)
         file1=fullfile(imgPath,imgs(im).name);
         fprintf('filename=%s\n%d',file1,im);
         slidePtr=openslide_open(file1);
@@ -92,6 +97,7 @@ for ip=1:length(imagePath)
         ff.Properties.VariableNames={'features'};
         [ylabel,scores]=trainedModel_SVM_cubic.predictFcn(ff);
         
+        
         % 7) feature clustering (AP clustering)
         feat_tumor=feat(logical(ylabel),:);   %% tumore tile lbp features
         
@@ -109,54 +115,81 @@ for ip=1:length(imagePath)
         % %         end
         %% end--testing
         
-        feat_tumor_cluster=[feat_tumor,(top_left_tumor+bottom_right_tumor)/2];
-        
-        %% history tests
-        % %         [idx,indf]=feature_clustering(feat_tumor_cluster,50); % k-means clustering
-        % %         freq=hist(idx,1:length(unique(idx)));
-        
-        [idx,indf]=feature_clustering_AP(feat_tumor_cluster);       % AP clustering
-        freq=zeros(1,length(indf));
-        for t=1:length(indf)
-            freq(t)=sum(idx==indf(t));
+        if without_ap==false
+            feat_tumor_cluster=[feat_tumor,(top_left_tumor+bottom_right_tumor)/2];
+            
+            %% history tests
+            % %         [idx,indf]=feature_clustering(feat_tumor_cluster,50); % k-means clustering
+            % %         freq=hist(idx,1:length(unique(idx)));
+            
+            [idx,indf]=feature_clustering_AP(feat_tumor_cluster);       % AP clustering
+            freq=zeros(1,length(indf));
+            for t=1:length(indf)
+                freq(t)=sum(idx==indf(t));
+            end
+            
+            if debug==1
+                %% for generating figures shown in the paper
+                mpdc10 = distinguishable_colors(length(indf));
+                temp=top_left(logical(ylabel),:);
+                figure,imshow(RGB)
+                for i=1:size(temp,1)
+                    tl=temp(i,:);
+                    ind=find(idx(i)==indf);
+                    pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
+                    hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
+                    hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
+                end
+                
+                temp2=temp(indf,:);
+                
+                for t=1:size(temp2,1)
+                    tp=temp2(t,:);
+                    hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
+                end
+                
+                temp=top_left(logical(ylabel),:);
+                temp2=temp(indf,:);
+                for t=1:size(temp2,1)
+                    tp=temp2(t,:);
+                    hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15);
+                    hold on,text(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,num2str(idx(t)));
+                end
+                %saveas(gcf,strcat(debugOutput,imgs(im).name,'.jpg'));
+                close all;
+            end
+            
+            top_left_np=top_left_tumor(indf,:);
+            bottom_right_np=bottom_right_tumor(indf,:);
+            
+            % 9) save tumor tiles based on ap clustering for subsequent feature extraction
+            if any(mag==mag10)
+                levelforRead=find(mag==mag10,1);
+                feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE);
+            else
+                magToUseAbove=min(mag(mag>mag10));
+                levelforRead=find(mag==magToUseAbove);
+                feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE,magToUseAbove);
+            end
+            
+            % 10) save representative tumor tile name, and the number of
+            % patches in that class
+            save(strcat(apfreqOutput,imgs(im).name,'.mat'),'feat_cell');
+        else
+            top_left_np=top_left_tumor;
+            bottom_right_np=bottom_right_tumor;
+            
+            % 9) save tumor tiles based on ap clustering for subsequent feature extraction
+            if any(mag==mag10)
+                levelforRead=find(mag==mag10,1);
+                xu_save_all_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},HE);
+            else
+                magToUseAbove=min(mag(mag>mag10));
+                levelforRead=find(mag==magToUseAbove);
+                xu_save_all_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},HE,magToUseAbove);
+            end
         end
-        
-        if debug==1
-            %% for generating figures shown in the paper
-            mpdc10 = distinguishable_colors(length(indf));
-            temp=top_left(logical(ylabel),:);
-            figure,imshow(RGB)
-            for i=1:size(temp,1)
-                tl=temp(i,:);
-                ind=find(idx(i)==indf);
-                pos=[tl(2) tl(1) tileSize(2)-1 tileSize(1)-1];
-                hold on, rectangle('Position',pos,'EdgeColor','g','LineWidth',2);
-                hold on,plot(tl(2)+tileSize(2)/2,tl(1)+tileSize(1)/2,'*','Color',mpdc10(ind,:),'MarkerSize',15, 'LineWidth',10);
-            end
-            
-            temp2=temp(indf,:);
-            
-            for t=1:size(temp2,1)
-                tp=temp2(t,:);
-                hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15, 'LineWidth',10);
-            end
-            
-            temp=top_left(logical(ylabel),:);
-            temp2=temp(indf,:);
-            for t=1:size(temp2,1)
-                tp=temp2(t,:);
-                hold on,plot(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,'r*','MarkerSize',15);
-                hold on,text(tp(2)+tileSize(2)/2,tp(1)+tileSize(1)/2,num2str(idx(t)));
-            end
-            %saveas(gcf,strcat(debugOutput,imgs(im).name,'.jpg'));
-            close all;
-        end
-        
-        top_left_np=top_left_tumor(indf,:);
-        bottom_right_np=bottom_right_tumor(indf,:);
-        %%top_left_np=top_left_tumor;
-        %%bottom_right_np=bottom_right_tumor;
-        
+        toc
         % 8) optionall for computing lbp feautres - history tests
         if LBP_baseline==true
             feat40=feat_tumor(indf,:);
@@ -174,20 +207,8 @@ for ip=1:length(imagePath)
             %save(strcat(featureOutput{ip},imgs(im).name,'.mat'),'feat_out');
         end
         
-        % 9) save tumor tiles based on ap clustering for subsequent feature extraction 
-        if any(mag==mag10)
-            levelforRead=find(mag==mag10,1);
-            feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE);
-        else
-            magToUseAbove=min(mag(mag>mag10));
-            levelforRead=find(mag==magToUseAbove);
-            feat_cell=xu_save_selected_image_patches(top_left_np,bottom_right_np,slidePtr,levelforRead,mag10,magCoarse,imgs(im).name(1:23),clusterImgOutput{ip},freq',HE,magToUseAbove);
-        end
         
-        % 10) save representative tumor tile name, and the number of
-        % patches in that class
-        save(strcat(apfreqOutput,imgs(im).name,'.mat'),'feat_cell');
-        
+ 
     end
 end
 

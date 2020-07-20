@@ -7,12 +7,15 @@ function e_tmb_map_entropy
 
 %% either high_low or mid is 1
 high_low=0;
-mid=1;
+mid=0;
+tcga_luad=1;
 
 if high_low==1
     tmb_path='.\heatmap_blca\mat_files\high_low\';
 elseif mid==1
     tmb_path='.\heatmap_blca\mat_files\mid\';
+elseif tcga_luad==1
+    tmb_path='..\..\..\tcga-lung-mutationburden\tcga_luad_tmb_predicion\4)plot_figures\heatmaps\';
 else
     disp('impossible!!!')
 end
@@ -38,23 +41,24 @@ for i=1:length(mat_files)
     end
     
     % save gray-scale heatmap
-   % temp=strsplit(temp_file,'.');
-   % imwrite(tmb_map,strcat(graymap_path,temp{1},'.png'));
+    % temp=strsplit(temp_file,'.');
+    % imwrite(tmb_map,strcat(graymap_path,temp{1},'.png'));
     
     sh_entropy=shannon_entropy(tmb_level);
     %save(strcat(feat_path,temp_file),'sh_entropy');
-    pid_entropy{i,1}=temp_file;
+    pid_entropy{i,1}=temp_file(1:23);
     pid_entropy{i,2}=sh_entropy;
 end
 
-label=([pid_entropy{:,2}]>median([pid_entropy{:,2}]));
-
-pid_entropy(:,3)=num2cell(label);
+%label=([pid_entropy{:,2}]>median([pid_entropy{:,2}]));
+%pid_entropy(:,3)=num2cell(label);
 
 if high_low==1
     save(strcat(feat_path,'feat_hl','.mat'),'pid_entropy');
 elseif mid==1
     save(strcat(feat_path,'feat_mid','.mat'),'pid_entropy');
+elseif tcga_luad==1
+    save(strcat('..\..\..\tcga-lung-mutationburden\tcga_luad_tmb_predicion\5)survival_analysis\','tcga_luad_entropy','.mat'),'pid_entropy');
 else
     disp('undefined selection!!!!!!!')
 end

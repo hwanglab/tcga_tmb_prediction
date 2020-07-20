@@ -9,13 +9,13 @@ library(readxl)
 library(R.matlab)
 library(openxlsx)
 
-data_path0<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/step07)_plot_km_curves/patients_all/"
+data_path0<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/step07)_plots_R/patients_all/"
 pid_tmb_pred<-read_excel(paste(data_path0,"pid_tmb_pred.xlsx",sep=""),sheet = "Sheet1")
 
 #data_path0<-"E:/Hongming/projects/tcga-bladder-mutationburden/heatmap_blca/"
 #pid_pred_gt<-read_excel(paste(data_path0,"pid_pred_gt.xlsx",sep=""),sheet = "Sheet1")
 
-data_path1<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/step07)_plot_km_curves/patients_all/"
+data_path1<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/step07)_plots_R/patients_all/"
 entropy_all<-read_excel(paste(data_path1,"entropy_all.xlsx",sep=""),sheet = "Sheet1")
 pvalue<-entropy_all$entropy
 pid<-entropy_all$`patient ID`
@@ -68,7 +68,7 @@ for (kk in 1:length(pid)){
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
 
-data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/"
+data_path<-"E:/Hongming/projects/tcga-bladder-mutationburden/tcga_tmb_prediction/step00)_preprocessing/"
 blca_data<-read_excel(paste(data_path,"Table_S1.2017_08_05.xlsx",sep=""),sheet="Master table")
 
 
@@ -127,7 +127,7 @@ ggsurvplot(fit1,pval = TRUE,
            legend=c(0.75,0.85),
            legend.labs=c("High-Low (76)","Others (292)"),
            legend.title="Categories",
-           xlab="Time in months")+ggtitle("Whole Bladder Cohort")
+           xlab="Time in months")+ggtitle("TCGA BLCA (n=368)")
 
 #dev.off()
 ggsave(filename = "km_2class_all3.eps",

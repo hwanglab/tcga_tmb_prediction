@@ -19,6 +19,7 @@ from keras.models import Model
 from skimage.io import imshow
 import scipy.io
 import glob
+import time
 
 # --- parameter settings ----#
 # dimensions of image patches at 20x
@@ -26,7 +27,8 @@ img_width, img_height = 1024, 1024
 # tcga_blca .svs slides
 img_path=['E:/data/blca_mutationBurden/blca_wsi/','E:/data/blca_mutationBurden/blca_wsi2/']
 # selected tumor tiles by main_wsi_tiling_v01.m
-train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_CN_20X/'] # original patches
+#train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/tiles_output/P_CN_20X/'] # original patches
+train_data_dir=['E:/Hongming/projects/tcga-bladder-mutationburden/excel_process/speed_test/proposed/']
 
 save_features=True # if True you will save features into .mat files
 model_array=['resnet50','nasnet_large','xception','inceptionv3','inceptionresnetv2','densenet','vgg19']
@@ -69,10 +71,10 @@ def save_bottlebeck_features(model_name):
         #base_model=vgg19.VGG19(input_shape=(img_height,img_width,3),weights='imagenet', include_top=False)
         #model=Model(inputs=base_model.input,outputs=base_model.get_layer('block4_pool').output)
 
-    for i,layer in enumerate(model.layers):
-        print(i,layer.name)
+    #for i,layer in enumerate(model.layers):
+    #    print(i,layer.name)
 
-    print(model.summary())
+    #print(model.summary())
 
     for ind in range(1, len(img_path)):
         path_ind = img_path[ind]
@@ -83,7 +85,9 @@ def save_bottlebeck_features(model_name):
                 patient_id=image_name[0:23]
                 image_features = []
                 image_names = []
-                #patient_id='TCGA-2F-A9KT'
+
+                ss=time.time()
+                patient_id='TCGA-2F-A9KO'
                 #patches=os.listdir(train_data_dir[ind]+patient_id+'*.png')
                 patches=glob.glob(train_data_dir[0]+patient_id+'*.png')
 
@@ -120,6 +124,8 @@ def save_bottlebeck_features(model_name):
                     image_features.append(features)
                     image_names.append(patch_split[1])
 
+                se=time.time()-ss
+                print(se)
                 if save_features==True:
                     scipy.io.savemat(feat_output[ind]+patient_id+'_feat.mat', mdict={'image_features': image_features, 'image_names':image_names})
 
