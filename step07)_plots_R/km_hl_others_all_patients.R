@@ -20,6 +20,8 @@ entropy_all<-read_excel(paste(data_path1,"entropy_all.xlsx",sep=""),sheet = "She
 pvalue<-entropy_all$entropy
 pid<-entropy_all$`patient ID`
 
+# plot the histogram of entropy
+hist(pvalue, breaks = 50)
 
 plabel<-vector()
 plabel1<-vector()
@@ -29,6 +31,9 @@ plabel1<-(pvalue>tt[3])
 plabel1[plabel1==TRUE]<-'High'
 plabel1[plabel1==FALSE]<-'Low'
 
+# plot the histogram of entropy
+hist(pvalue, main='Histogram of entropy values',xlab="Entropy Value", ylab="Frequency",breaks = 50)
+abline(v=tt[3],col='red',lwd=3, lty=2)
 
 for (kk in 1:length(pid)){
   temp_pID<-substring(as.character(pid[kk]),2,24)

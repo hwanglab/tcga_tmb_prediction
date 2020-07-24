@@ -6,9 +6,9 @@
 function e_tmb_map_entropy
 
 %% either high_low or mid is 1
-high_low=0;
+high_low=1;
 mid=0;
-tcga_luad=1;
+tcga_luad=0;
 
 if high_low==1
     tmb_path='.\heatmap_blca\mat_files\high_low\';
@@ -44,7 +44,7 @@ for i=1:length(mat_files)
     % temp=strsplit(temp_file,'.');
     % imwrite(tmb_map,strcat(graymap_path,temp{1},'.png'));
     
-    sh_entropy=shannon_entropy(tmb_level);
+    sh_entropy=shannon_entropy_bin(tmb_level);
     %save(strcat(feat_path,temp_file),'sh_entropy');
     pid_entropy{i,1}=temp_file(1:23);
     pid_entropy{i,2}=sh_entropy;
@@ -85,3 +85,31 @@ P = P ./ numel(X);
 % Compute the Shannon's Entropy
 
 H = -sum(P .* log2(P)); % 1.5
+
+function H=shannon_entropy_bin(X)
+% shannon's entropy
+
+% Build the probabilities vector according to X...
+
+a=0:0.1:1;
+X2=X;
+for i=1:length(X)
+    temp=abs(X(i)-a);
+    [v,ind]=min(temp);
+    X2(i)=a(ind);
+end
+    
+X_uni = unique(X2);
+X_uni_size = numel(X_uni);
+
+P = zeros(X_uni_size,1);
+
+for i = 1:X_uni_size
+    P(i) = sum(X2 == X_uni(i));
+end
+
+P = P ./ numel(X);
+
+% Compute the Normalized Entropy
+
+H = -sum(P .* log2(P))/log2(X_uni_size);

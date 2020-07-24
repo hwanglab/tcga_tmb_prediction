@@ -43,7 +43,7 @@ end
 Ftrain=[];
 Ltrain=[];
 
-load('..\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
+load('..\step00)_preprocessing\blca_MutBurdens.mat');  % TCGA TMB categories by 1-third percentile
 %load('..\blca_MutBurdens_Yunku.mat'); % Yunku provided values
 %load('..\blca_MutBurdensII.mat');     % by 5-20 thresholds
 
@@ -156,7 +156,7 @@ for cc=1:ItNum
         end
         
         template = templateSVM(...
-            'KernelFunction', 'linear', ...
+            'KernelFunction', 'Gaussian', ...
             'PolynomialOrder', [], ...
             'KernelScale', 'auto', ...
             'BoxConstraint', 1, ...
@@ -212,7 +212,7 @@ senm=mean(SEN);
 pred=ones(length(labels),1);
 pred(SSC(:,2)>SSC(:,1))=3;
 
-save(strcat('..\step06)_plot_figures\tcga_blca_proposed\','p_resnet50_linear.mat'),'labels','SSC');
+%save(strcat('..\step06)_plot_figures\tcga_blca_proposed\','p_resnet50_linear.mat'),'labels','SSC');
 
 pred_bladder=cell(length(pred),3);
 pred_bladder(:,1)=patID;
