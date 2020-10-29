@@ -129,9 +129,9 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("High-High (97)","High-Low (76)","Low-High (87)","Low-Low (108)"),
-           legend.title="Prediction categories",
-           xlab="Time in months")+ggtitle("Whole Bladder Cohort")
+           legend.labs=c("TMB High-High Entropy (97)","TMB High-Low Entropy (76)","TMB Low-High Entropy (87)","TMB Low-Low Entropy (108)"),
+           legend.title="Categories",
+           xlab="Time in months")+ggtitle("TCGA BLCA (n=368)")
 
 dev.off()
 

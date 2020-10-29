@@ -23,7 +23,8 @@ pvalue<-entropy_all$entropy
 pid<-entropy_all$`patient ID`
 
 
-
+data_path1<-"E:/Hongming/papers/2020 cancer patient tmb prediction/TMB_Manuscript/supplement/"
+sup_tab<-read_excel(paste(data_path1,"temp1.xlsx",sep=""),sheet="Sheet1")
 
 plabel<-vector()
 plabel1<-vector()
@@ -41,9 +42,9 @@ plabel1[plabel1==TRUE]<-'High'
 plabel1[plabel1==FALSE]<-'Low'
 
 for (kk in 1:length(pid)){
-  temp_pID<-substring(as.character(pid[kk]),2,24)
+  temp_pID<-substring(as.character(pid[kk]),2,13)
   for (jj in 1:length(pid_tmb_pred$`patient_names`))
-    if (temp_pID==substring(as.character(pid_tmb_pred$`patient_names`[jj]),1,23)){
+    if (temp_pID==substring(as.character(pid_tmb_pred$`patient_names`[jj]),1,12)){
       plabel[kk]<-paste(pid_tmb_pred$gt_labels[jj],'-',pid_tmb_pred$preds[jj],'-',plabel1[kk],sep="")
       break
     }
@@ -55,11 +56,11 @@ plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
   if (plabel[kk]=="High-High-Low") {
-    pid2[ind]<-pid[kk]
+    pid2[ind]<-substring(as.character(pid[kk]),2,13)
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
   } else if (plabel[kk]=="High-High-High" | plabel[kk]=="High-Low-High" | plabel[kk]=="High-Low-Low"){
-    pid2[ind]<-pid[kk]
+    pid2[ind]<-substring(as.character(pid[kk]),2,13)
     plabel2[ind]<-'High others'
     ind<-ind+1
   }  else {
@@ -67,6 +68,22 @@ for (kk in 1:length(pid)){
   }
   
 }
+
+# generate sup files
+fig<-vector()
+for (nn in 1 :length(sup_tab$`Case ID`)){
+  temp_pID=as.character(sup_tab$`Case ID`[nn])
+  ind<-which(pid2==temp_pID)
+  if (length(ind)==1) {
+    fig<-c(fig,plabel2[ind])
+  } else {
+    fig<-c(fig,'NA')
+  }
+}
+
+sup_tab['Fig5.(b)']<-fig
+#write.xlsx(sup_tab, paste(data_path1,"temp1.xlsx",sep=""), sheetName = "Sheet1")
+
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
@@ -79,7 +96,7 @@ for (nn in 1:length(blca_pred$patientID))
   temp_pID=as.character(blca_pred$patientID[nn])
   for (kk in 1:length(blca_data$`Case ID`))
   {
-    if (substring(temp_pID,2,13)==as.character(blca_data$`Case ID`[kk]))
+    if (temp_pID==as.character(blca_data$`Case ID`[kk]))
     {
       futime<-c(futime,as.numeric(blca_data$`Combined days to last followup or death`[kk])/30.0)
       fustat<-c(fustat,as.character(blca_data$`Vital status`[kk]))

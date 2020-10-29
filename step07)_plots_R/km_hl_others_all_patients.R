@@ -20,6 +20,9 @@ entropy_all<-read_excel(paste(data_path1,"entropy_all.xlsx",sep=""),sheet = "She
 pvalue<-entropy_all$entropy
 pid<-entropy_all$`patient ID`
 
+data_path1<-"E:/Hongming/papers/2020 cancer patient tmb prediction/TMB_Manuscript/supplement/"
+sup_tab<-read_excel(paste(data_path1,"temp.xlsx",sep=""),sheet="Sheet1")
+
 # plot the histogram of entropy
 hist(pvalue, breaks = 50)
 
@@ -49,19 +52,20 @@ plabel2<-vector()
 ind=1
 for (kk in 1:length(pid)){
   if (plabel[kk]=="High-Low") {
-    pid2[ind]<-substring(pid[kk],2,24)
+    #pid2[ind]<-substring(pid[kk],2,24)
+    pid2[ind]<-substring(pid[kk],2,13)
     plabel2[ind]<-plabel[kk]
     ind<-ind+1
   } else if (plabel[kk]=="High-High"){
-    pid2[ind]<-substring(pid[kk],2,24)
+    pid2[ind]<-substring(pid[kk],2,13)
     plabel2[ind]<-"Others"
     ind<-ind+1
   } else if (plabel[kk]=="Low-Low") {
-    pid2[ind]<-substring(pid[kk],2,24)
+    pid2[ind]<-substring(pid[kk],2,13)
     plabel2[ind]<-"Others"
     ind<-ind+1
   } else if(plabel[kk]=="Low-High"){
-    pid2[ind]<-substring(pid[kk],2,24)
+    pid2[ind]<-substring(pid[kk],2,13)
     plabel2[ind]<-"Others"
     ind<-ind+1
   }
@@ -69,6 +73,22 @@ for (kk in 1:length(pid)){
     print('skip!')
   }
 }
+
+# generate sup files
+fig<-vector()
+for (nn in 1 :length(sup_tab$`Case ID`)){
+  temp_pID=as.character(sup_tab$`Case ID`[nn])
+  
+  ind<-which(pid2==temp_pID)
+  
+  if (length(ind)==1) {
+    fig<-c(fig,plabel2[ind])
+  } else {
+    fig<-c(fig,'NA')
+  }
+}
+sup_tab['Fig5.(a)']<-fig
+#write.xlsx(sup_tab, paste(data_path1,"temp1.xlsx",sep=""), sheetName = "Sheet1")
 
 blca_pred<-data.frame("patientID"=Reduce(rbind,pid2),"label_class"=Reduce(rbind,plabel2))
 #write.xlsx(blca,"blca.xlsx")
@@ -84,7 +104,7 @@ for (nn in 1:length(blca_pred$patientID))
   temp_pID=as.character(blca_pred$patientID[nn])
   for (kk in 1:length(blca_data$`Case ID`))
   {
-    if (substring(temp_pID,1,12)==as.character(blca_data$`Case ID`[kk]))
+    if (temp_pID==as.character(blca_data$`Case ID`[kk]))
     {
       futime<-c(futime,as.numeric(blca_data$`Combined days to last followup or death`[kk])/30.0)
       fustat<-c(fustat,as.character(blca_data$`Vital status`[kk]))

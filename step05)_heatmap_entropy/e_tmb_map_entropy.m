@@ -25,6 +25,10 @@ graymap_path='.\heatmap_blca\gray_maps\';
 
 mat_files=dir(strcat(tmb_path,'*.mat'));
 
+test1=[0.51,0.7,0.8,0.90,0.91,0.93];
+%test1=[0.10,0.30,0.50,0.70,0.80,0.90];
+H=shannon_entropy_bin(test1);
+
 pid_entropy=cell(length(mat_files),3);
 for i=1:length(mat_files)
     temp_file=mat_files(i).name;
@@ -91,12 +95,13 @@ function H=shannon_entropy_bin(X)
 
 % Build the probabilities vector according to X...
 
-a=0:0.1:1;
+a=0:1.0:1;
 X2=X;
+
 for i=1:length(X)
-    temp=abs(X(i)-a);
-    [v,ind]=min(temp);
-    X2(i)=a(ind);
+   temp=abs(X(i)-a);
+   [v,ind]=min(temp);
+   X2(i)=a(ind);
 end
     
 X_uni = unique(X2);
@@ -112,4 +117,4 @@ P = P ./ numel(X);
 
 % Compute the Normalized Entropy
 
-H = -sum(P .* log2(P))/log2(X_uni_size);
+H = -sum(P .* log2(P))/(log2(X_uni_size)+0.00001);

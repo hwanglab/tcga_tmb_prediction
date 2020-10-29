@@ -15,8 +15,7 @@ tmb_path=['../heatmap_blca/mat_files/high_low/',
 
 tumor_path='../heatmap_blca/tumor_maps/'
 
-til_maps=['Y:/projects/data/tcga_blca_slide/til_maps/wsi/',
-          'Y:/projects/data/tcga_blca_slide/til_maps/wsi2/']
+til_maps=['Y:/projects/data/tcga_blca_slide/til_maps/']
 
 output_path='../heatmap_blca/til_tmb_maps/'
 
@@ -44,12 +43,17 @@ for path in tmb_path:
         tmb_map = skimage.transform.resize(tmb_map, til_map.shape[0:2],
                                          order=1)  # 0 nearest-neighbor, 1: bi-linear (default)
 
-        tumor_map=skimage.filters.gaussian(tumor_map,sigma=1.5)
-        tmb_map=skimage.filters.gaussian(tmb_map,sigma=1.5)
+        #tumor_map=skimage.filters.gaussian(tumor_map,sigma=1)
+        tmb_map=skimage.filters.gaussian(tmb_map,sigma=2)
 
         # save figure 1: probability maps
-        til_map[:,:,1]=tmb_map
-        til_map[:,:,2]=tumor_map
+        #mask=(tmb_map>0.8)
+        #temp=np.multiply(np.random.normal(0, 0.2, til_map.shape[0:2]),mask)
+        #til_map[:,:,0]=til_map[:,:,0]+0.2
+        #mask=(til_map[:,:,0]>1)
+        #til_map[:,:,0][mask]=1.0
+        til_map[:,:,1]=(np.multiply(tmb_map,tmb_map>0.5)-0.2)
+        til_map[:,:,2]=tumor_map-0.2
         #til_map[:,:,2]=np.zeros(tmb_map.shape)
 
         imsave(output_path + name.split('\\')[-1].split('.')[0] + '_probability.png', til_map)
@@ -59,7 +63,7 @@ for path in tmb_path:
         til_map2[:,:,0]=(til_map2[:,:,0]>=0.5)
         til_map2[:, :, 1] = (til_map2[:, :, 1] >= 0.5)
         til_map2[:, :, 2] = (til_map2[:, :, 2] >= 0.5)
-        imsave(output_path + name.split('\\')[-1].split('.')[0] + '_binary.png', til_map2)
+        #imsave(output_path + name.split('\\')[-1].split('.')[0] + '_binary.png', til_map2)
 
         tumor_mask=(til_map2[:,:,2]>=0.5)
         til_mask=(til_map2[:,:,0]>=0.5)

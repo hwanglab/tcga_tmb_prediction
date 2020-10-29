@@ -115,9 +115,9 @@ fit1<-survfit(surv_object~label_class,data=blca_pred)
 ggsurvplot(fit1,pval = TRUE,
            #risk.table = TRUE, 
            legend=c(0.8,0.9),
-           legend.labs=c("High (173)","Low (195)"),
+           legend.labs=c("TMB High (173)","TMB Low (195)"),
            legend.title="Categories",
-           xlab="Time in months")+ggtitle("Whole Bladder Cohort")
+           xlab="Time in months")+ggtitle("TCGA BLCA (n=368)")
 
 #dev.off()
 ggsave(filename = "km_2class_all1.eps",
